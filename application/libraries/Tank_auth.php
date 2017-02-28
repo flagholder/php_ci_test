@@ -325,7 +325,8 @@ class Tank_auth
 	 *
 	 * @param	string
 	 * @param	string
-	 * @return	bool
+     * @param   string
+	 * @return	array
 	 */
 	function reset_password($user_id, $new_pass_key, $new_password)
 	{

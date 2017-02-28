@@ -77,10 +77,13 @@
 	 ***************** YOUR LIBRARIES *****************
 	 * @property Layout              $layout               Layout Class
 	 ***************** YOUR MODELS *****************
-	 * @property user_model          $user_model           ,$user
+	 * @property users               $users                tank auth user model
+     * @property user_autologin      $user_autologin       tank auth auto login model
 	 * @property data_model          $data_model
 	 * @property products_model      $products_model
 	 * @property movie_model         $movie_model
+     * @property Auth                $auth                  auth controller
+     * @property Tank_auth           $tank_auth             tank auth library
 	 */
 	class CI_Controller {
 		public function __construct() {
@@ -138,6 +141,7 @@
 	 * @property CI_Javascript       $javascript           Javascript Class
 	 ***************** YOUR LIBRARIES *****************
 	 * @property Layout              $layout               Layout Class
+     *
 	 */
 	class CI_Model {
 		public function __construct() {

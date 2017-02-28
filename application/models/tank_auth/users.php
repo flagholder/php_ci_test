@@ -226,8 +226,8 @@ class Users extends CI_Model
 	 * @param	int
 	 * @param	string
 	 * @param	int
-	 * @return	void
-	 */
+	 * @return bool
+     */
 	function can_reset_password($user_id, $new_pass_key, $expire_period = 900)
 	{
 		$this->db->select('1', FALSE);
