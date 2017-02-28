@@ -25,6 +25,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 */
 $config['base_url'] = 'http://localhost:1123/php-ci-test/';
 
+//  Static URL
+$config['static_url'] = 'http://localhost:1123/php-ci-test/';
+
 /*
 |--------------------------------------------------------------------------
 | Index File
@@ -223,7 +226,7 @@ $config['allow_get_array'] = TRUE;
 | your log files will fill up very fast.
 |
 */
-$config['log_threshold'] = 0;
+$config['log_threshold'] = 4;
 
 /*
 |--------------------------------------------------------------------------
@@ -234,7 +237,7 @@ $config['log_threshold'] = 0;
 | application/logs/ directory. Use a full server path with trailing slash.
 |
 */
-$config['log_path'] = '';
+$config['log_path'] = '../../logs/';
 
 /*
 |--------------------------------------------------------------------------
@@ -248,7 +251,7 @@ $config['log_path'] = '';
 | Note: Leaving it blank will default to 'php'.
 |
 */
-$config['log_file_extension'] = '';
+$config['log_file_extension'] = 'log';
 
 /*
 |--------------------------------------------------------------------------
@@ -378,7 +381,7 @@ $config['encryption_key'] = '';
 |
 */
 $config['sess_driver'] = 'database';
-$config['sess_cookie_name'] = 'ci_session';
+$config['sess_cookie_name'] = 'xpsid';
 $config['sess_expiration'] = 7200;
 $config['sess_save_path'] = 'ci_sessions';
 $config['sess_match_ip'] = FALSE;
@@ -405,6 +408,7 @@ $config['cookie_domain'] = '';
 $config['cookie_path'] = '/';
 $config['cookie_secure'] = FALSE;
 $config['cookie_httponly'] = FALSE;
+$config['cookie_expiration'] = 604800;
 
 /*
 |--------------------------------------------------------------------------
