@@ -548,7 +548,7 @@ class Tank_auth
 	/**
 	 * Login user automatically if he/she provides correct autologin verification
 	 *
-	 * @return	void
+	 * @return	bool
 	 */
 	private function autologin()
 	{
