@@ -76,6 +76,7 @@
 	 * @property CI_Javascript       $javascript           Javascript Class
 	 ***************** YOUR LIBRARIES *****************
 	 * @property Layout              $layout               Layout Class
+     * @property Tank_auth           $tank_auth            tank auth lib
 	 ***************** YOUR MODELS *****************
 	 * @property users               $users                tank auth user model
      * @property user_autologin      $user_autologin       tank auth auto login model
