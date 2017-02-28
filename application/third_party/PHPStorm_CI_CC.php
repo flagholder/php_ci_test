@@ -77,6 +77,7 @@
 	 ***************** YOUR LIBRARIES *****************
 	 * @property Layout              $layout               Layout Class
      * @property Tank_auth           $tank_auth            tank auth lib
+     * @property Error               $error                Error Class
 	 ***************** YOUR MODELS *****************
 	 * @property users               $users                tank auth user model
      * @property user_autologin      $user_autologin       tank auth auto login model
@@ -84,7 +85,6 @@
 	 * @property products_model      $products_model
 	 * @property movie_model         $movie_model
      * @property Auth                $auth                  auth controller
-     * @property Tank_auth           $tank_auth             tank auth library
 	 */
 	class CI_Controller {
 		public function __construct() {

@@ -42,9 +42,9 @@ class MY_Controller extends CI_Controller
     /**
      * 判断链接中的token是否有效
      *
-     * @param 类型 $fields 描述
+     * @param
      *
-     * @return 类型 描述
+     * @return void
      */
     public function checkSDKTokenLogin()
     {
@@ -99,7 +99,7 @@ class MY_Controller extends CI_Controller
      *
      * @param
      *
-     * @return
+     * @return object
      */
     public function TransBegin()
     {
@@ -112,7 +112,7 @@ class MY_Controller extends CI_Controller
      *
      * @param
      *
-     * @return
+     * @return object
      */
     public function TransXABegin()
     {

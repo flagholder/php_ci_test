@@ -237,7 +237,7 @@ $config['log_threshold'] = 4;
 | application/logs/ directory. Use a full server path with trailing slash.
 |
 */
-$config['log_path'] = '../../logs/';
+$config['log_path'] = 'C:/web_workspace/logs/';
 
 /*
 |--------------------------------------------------------------------------
