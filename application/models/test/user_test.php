@@ -14,11 +14,11 @@ class User_Test extends MY_Model
         $ci =& get_instance();
     }
 
-    public function count_users()
+    public function getUsersNum()
     {
-        $num = $this->num_rows('users');
+        $num = $this->getCount('users');
         log_message('info', 'count users:'.$num);
-        $this->dberror();
+        $this->dbError();
     }
 
 }

@@ -14,7 +14,7 @@ class MY_Model extends CI_Model
      *
      * @return bool true/false
      */
-    public function dberror()
+    public function dbError()
     {
 //
 //        if ($this->db->_error_number() != 0)
@@ -61,15 +61,15 @@ class MY_Model extends CI_Model
      * 获取表中的记录数
      *
      * @param string $table 表名称
-     * @param array $cond 查询条件
+     * @param array $condition 查询条件
      *
-     * @return int 成功返回条数，失败返回false
+     * @return int 成功返回条数，失败返回0
      */
-    public function num_rows($table, $cond = Null)
+    public function getCount($table, $condition = Null)
     {
         $this->db->select('count(1) as cnt');
-        if (!empty($cond)) {
-            $this->db->where($cond);
+        if (!empty($condition)) {
+            $this->db->where($condition);
         }
         $query = $this->db->get($table);
 
@@ -94,7 +94,7 @@ class MY_Model extends CI_Model
      *
      * @return float nextval
      */
-    public function nextval($table, $field, $cnt = 1)
+    public function getNextVal($table, $field, $cnt = 1)
     {
         if (function_exists('get_nextval')) {
             return get_nextval($table . '-' . $field);

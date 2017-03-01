@@ -2,18 +2,17 @@
 
 class Auth extends CI_Controller
 {
-    function __construct()
+    public function __construct()
     {
         parent::__construct();
 
         $this->load->helper(array('form', 'url'));
         $this->load->library('form_validation');
-//		$this->load->library('security');
         $this->load->library('tank_auth');
         $this->lang->load('tank_auth');
     }
 
-    function index()
+    public function index()
     {
         if ($message = $this->session->flashdata('message')) {
             $this->load->view('auth/general_message', array('message' => $message));
@@ -30,7 +29,7 @@ class Auth extends CI_Controller
     function login()
     {
         if ($this->tank_auth->is_logged_in()) {                                    // logged in
-            redirect($this->config->item('base_url').'/static/index.html');
+            redirect($this->config->item('base_url') . '/static/index.html');
 
         } elseif ($this->tank_auth->is_logged_in(FALSE)) {                        // logged in, not activated
             redirect('/auth/send_again/');
