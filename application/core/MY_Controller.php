@@ -32,11 +32,11 @@ class MY_Controller extends CI_Controller
     public function __construct($checkLogin = false)
     {
         parent::__construct();
-        $this->error->set_error(ERR::ERR_OK);
+//        $this->error->set_error(ERR::ERR_OK);
 
-        $this->checkSDKTokenLogin();
-
-        $this->loginVerify($checkLogin);
+//        $this->checkSDKTokenLogin();
+//
+//        $this->loginVerify($checkLogin);
     }
 
     /**
@@ -224,10 +224,10 @@ class MY_Controller extends CI_Controller
 
             if (current_url() != site_url())
             {
-                redirect('/login/login?redurl='.urlencode(current_url().$this->build_request(true)), 'refresh');
+                redirect('/auth/login?redurl='.urlencode(current_url().$this->build_request(true)), 'refresh');
             }
 
-            redirect('/login/login', 'refresh');
+            redirect('/auth/login', 'refresh');
         }
         else
         {
@@ -244,12 +244,13 @@ class MY_Controller extends CI_Controller
      */
     public function account_verify()
     {
-        $account = $this->auth->current_account();
-        $this->_uuid = $account['uuid'];
-        $this->_loginname = $account['loginname'];
+//        $account = $this->auth->current_account();
+//        $this->_uuid = $account['uuid'];
+//        $this->_loginname = $account['loginname'];
 
         // 判断用户状态, 封停/删除/可疑等状态用户无法操作
         // 判断用户是否能使用service_id
+        return;
     }
 
     function build_request($question_mark = false)

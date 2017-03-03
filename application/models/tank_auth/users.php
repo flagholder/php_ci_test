@@ -326,7 +326,7 @@ class Users extends CI_Model
 	 * @param	bool
 	 * @return	void
 	 */
-	function update_login_info($user_id, $record_ip, $record_time)
+	function update_login_info($user_id, $record_ip = true, $record_time = true)
 	{
 		$this->db->set('new_password_key', NULL);
 		$this->db->set('new_password_requested', NULL);

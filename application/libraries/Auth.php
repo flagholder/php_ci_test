@@ -2,13 +2,12 @@
 
 require_once('phpass-0.1/PasswordHash.php');
 
-define('STATUS_ACTIVATED', '1');
-define('STATUS_NOT_ACTIVATED', '0');
+require_once('Include/define.inc.php');
 
 /**
  * Auth
  *
- * Authentication library for Code Igniter.
+ * Authentication library
  *
  * @package		Auth
  * @author		Jerry Shen
@@ -35,20 +34,6 @@ class Auth
     }
 
 
-    /**
-     * Logout user from the site
-     *
-     * @return	void
-     */
-    function logout()
-    {
-        $this->delete_autologin();
-
-        // See http://codeigniter.com/forums/viewreply/662369/ as the reason for the next line
-        $this->ci->session->set_userdata(array('user_id' => '', 'username' => '', 'status' => ''));
-
-        $this->ci->session->sess_destroy();
-    }
 
     /**
      * Check if user logged in. Also test if user is activated or not.
@@ -56,11 +41,23 @@ class Auth
      * @param	bool
      * @return	bool
      */
-    function isLogin($activated = TRUE)
+    function isLogin()
     {
-        return $this->ci->session->userdata('status') === ($activated ? STATUS_ACTIVATED : STATUS_NOT_ACTIVATED);
+        return true;
+
     }
 
+
+    /**
+     * Check if user logged in. Also test if user is activated or not.
+     *
+     * @param	bool
+     * @return	bool
+     */
+    function is_logged_in($activated = TRUE)
+    {
+        return $this->ci->session->userdata('status') === ($activated ? DEF::USER_STATUS_ACTIVATED : DEF::USER_STATUS_NOT_ACTIVATED);
+    }
 
     /**
      * Login user automatically if user provides correct autologin verification
@@ -69,9 +66,9 @@ class Auth
      */
     private function autoLogin()
     {
-        if (!$this->is_logged_in() AND !$this->is_logged_in(FALSE)) {			// not logged in (as any user)
+        if (!$this->is_logged_in() AND !$this->is_logged_in(false)) {			// not logged in (as any user)
 
-            $this->ci->load->helper('cookie');
+//            $this->ci->load->helper('cookie');
             if ($cookie = get_cookie($this->ci->config->item('autologin_cookie_name', 'tank_auth'), TRUE)) {
 
                 $data = unserialize($cookie);
@@ -85,7 +82,7 @@ class Auth
                         $this->ci->session->set_userdata(array(
                             'user_id'	=> $user->id,
                             'username'	=> $user->username,
-                            'status'	=> STATUS_ACTIVATED,
+                            'status'	=> DEF::USER_STATUS_ACTIVATED,
                         ));
 
                         // Renew users cookie to prevent it from expiring
@@ -95,16 +92,34 @@ class Auth
                             'expire'	=> $this->ci->config->item('autologin_cookie_life', 'tank_auth'),
                         ));
 
-                        $this->ci->users->update_login_info(
-                            $user->id,
-                            $this->ci->config->item('login_record_ip', 'tank_auth'),
-                            $this->ci->config->item('login_record_time', 'tank_auth'));
-                        return TRUE;
+                        $this->ci->users->update_login_info($user->id);
+
+                        // Todo:
+                        // - add login history?
+
+                        return true;
                     }
                 }
             }
         }
-        return FALSE;
+        return false;
+    }
+
+
+
+    /**
+     * Logout user from the site
+     *
+     * @return	void
+     */
+    function logout()
+    {
+        $this->delete_autologin();
+
+        // See http://codeigniter.com/forums/viewreply/662369/ as the reason for the next line
+        $this->ci->session->set_userdata(array('user_id' => '', 'username' => '', 'status' => ''));
+
+        $this->ci->session->sess_destroy();
     }
 
 }

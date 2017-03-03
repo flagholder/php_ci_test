@@ -36,4 +36,11 @@ class DEF
     //状态(R-注册/L-登陆)
     const DEVICE_LOGIN_STATUS = 'L';
     const DEVICE_REGISTER_STATUS = 'R';
+
+    // User status
+    const USER_STATUS_NOT_ACTIVATED  = 0;
+    const USER_STATUS_ACTIVATED      = 1;
+    const USER_STATUS_BANNED         = 2;
+
+
 }
