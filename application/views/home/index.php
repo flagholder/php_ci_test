@@ -20,7 +20,7 @@
                     <p>Note: If you're viewing this page via a <code>file://</code> URL, the "next" and "previous"
                         Glyphicon buttons on the left and right might not load/display properly due to web browser
                         security rules.</p>
-                    <p><a class="btn btn-lg btn-primary" href="#" role="button">Sign up today</a></p>
+                    <p><a class="btn btn-lg btn-primary" href="auth/register/" role="button">Sign up today</a></p>
                 </div>
             </div>
         </div>
@@ -116,7 +116,7 @@
                 commodo.</p>
         </div>
         <div class="col-md-5">
-            <img class="featurette-image img-responsive center-block" data-src="holder.js/500x500/auto"
+            <img class="featurette-image img-responsive center-block" src="static/img/feature_1.jpg"
                  alt="Generic placeholder image">
         </div>
     </div>

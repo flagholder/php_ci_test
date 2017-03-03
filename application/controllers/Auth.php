@@ -1,14 +1,15 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 
-class Auth extends CI_Controller
+class Auth extends MY_Controller
 {
     public function __construct()
     {
         parent::__construct();
 
-        $this->load->helper(array('form', 'url'));
+        $this->load->helper('form');
         $this->load->library('form_validation');
         $this->load->library('tank_auth');
+        $this->load->library('xp_auth');
         $this->lang->load('tank_auth');
     }
 
@@ -19,7 +20,8 @@ class Auth extends CI_Controller
 //        } else {
 //            redirect('/auth/login/');
 //        }
-        redirect('/auth/login/');
+//        redirect('/auth/login/');
+        $this->login();
     }
 
     /**
@@ -30,10 +32,10 @@ class Auth extends CI_Controller
     public function login()
     {
         if ($this->tank_auth->is_logged_in()) {                                    // logged in
-            redirect($this->config->item('base_url') . '/static/index.html');
+            redirect($this->config->item('base_url') . '/home/');
 
         } elseif ($this->tank_auth->is_logged_in(FALSE)) {                        // logged in, not activated
-            redirect('/auth/send_again/');
+            redirect($this->config->item('base_url') . '/auth/send_again/');
 
         } else {
             $data['login_by_username'] = ($this->config->item('login_by_username', 'tank_auth') AND
