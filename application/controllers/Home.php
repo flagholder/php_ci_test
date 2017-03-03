@@ -12,7 +12,7 @@ class Home extends MY_Controller
     public function __construct()
     {
         parent::__construct(false);
-        $this->load->library('auth');
+        $this->load->library('xp_auth');
     }
 
     public function index()
@@ -21,7 +21,7 @@ class Home extends MY_Controller
             'selected' => 'home'
         );
 
-        if ($this->auth->isLogin()) {
+        if ($this->xp_auth->isLogin()) {
             $this->load->view('home/index', $data);
         } else {
             redirect('/auth/login');

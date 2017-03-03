@@ -15,22 +15,33 @@ require_once('Include/define.inc.php');
  * @license		2017 xProjects
  */
 
+/**
+ * Auth
+ *
+ * Authentication library
+ *
+ * @package		Auth
+ * @author		Jerry Shen
+ * @version		0.1
+ * @license		X-Projects Copyright (c) 2017
+ */
 
-class Auth
+class Xp_auth
 {
     private $error = array();
 
     function __construct()
     {
         $this->ci =& get_instance();
-
+        require_once('Include/define.inc.php');
         $this->ci->load->config('tank_auth', TRUE);
         $this->ci->load->library('session');
         $this->ci->load->database();
         $this->ci->load->model('tank_auth/users');
 
         // Try to auto login
-        $this->autoLogin();
+        $loginResult = $this->autoLogin();
+        log_debug('auto login result '.(int)$loginResult);
     }
 
 
@@ -43,8 +54,12 @@ class Auth
      */
     function isLogin()
     {
-        return true;
+//        log_debug('actived '.DEF::USER_STATUS_ACTIVATED);
 
+//        $isLogin = $this->is_logged_in() ? 'true' : 'false';
+//        log_debug('is login :'.$isLogin);
+
+        return $this->is_logged_in();
     }
 
 
@@ -56,7 +71,8 @@ class Auth
      */
     function is_logged_in($activated = TRUE)
     {
-        return $this->ci->session->userdata('status') === ($activated ? DEF::USER_STATUS_ACTIVATED : DEF::USER_STATUS_NOT_ACTIVATED);
+//        log_debug('session status :'.$this->ci->session->userdata('status').' - '.DEF::USER_STATUS_ACTIVATED);
+        return $this->ci->session->userdata('status') === ($activated ? (string) DEF::USER_STATUS_ACTIVATED : (string) DEF::USER_STATUS_NOT_ACTIVATED);
     }
 
     /**
