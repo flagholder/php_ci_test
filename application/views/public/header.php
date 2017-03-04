@@ -12,16 +12,16 @@
     <title>Create and show projects</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="static/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/php-ci-test/static/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <link href="static/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
+    <link href="/php-ci-test/static/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
 
-    <link rel="stylesheet" href="static/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/php-ci-test/static/css/font-awesome.min.css">
 
     <!-- Custom styles for this template -->
 <!--    <link href="https://getbootstrap.com/examples/navbar-fixed-top/navbar-fixed-top.css" rel="stylesheet">-->
-    <link href="static/css/main.css" rel="stylesheet">
+    <link href="/php-ci-test/static/css/main.css" rel="stylesheet">
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
