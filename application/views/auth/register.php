@@ -56,8 +56,8 @@
             <div class="clearfix form-group">&nbsp;</div>
 
             <div class="text-center col-sm-12 form-group">
-                <button type="submit" class="btn btn-info">
-                    <i class="fa fa-envelope fa-fw"></i>&nbsp;Submit
+                <button type="submit" class="btn btn-sky">
+                    <i class="fa fa-envelope fa-fw"></i>&nbsp;  Submit
                 </button>
             </div>
         </form>

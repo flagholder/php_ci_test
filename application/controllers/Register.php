@@ -36,6 +36,7 @@ class Register extends MY_Controller
     {
         $this->load->helper('form');
         $this->load->library('form_validation');
+        $this->load->library('tank_auth');
 
         $this->form_validation->set_rules('username', 'Username', 'trim|required|min_length[' . $this->config->item('username_min_length', 'tank_auth') . ']|max_length[' . $this->config->item('username_max_length', 'tank_auth') . ']|alpha_dash');
         $this->form_validation->set_rules('email', 'Email', 'trim|required|valid_email');
@@ -68,22 +69,24 @@ class Register extends MY_Controller
                 if ($email_activation) {                                    // send "activate" email
                     $data['activation_period'] = $this->config->item('email_activation_expire', 'tank_auth') / 3600;
 
-                    $this->_send_email('activate', $data['email'], $data);
+//                    $this->_send_email('activate', $data['email'], $data);
 
                     unset($data['password']); // Clear password (just for any case)
 
 //                    $this->_show_message($this->lang->line('auth_message_registration_completed_1'));
                     // show registration completed
+                    redirect('/auth/');
 
                 } else {
                     if ($this->config->item('email_account_details', 'tank_auth')) {    // send "welcome" email
 
-                        $this->_send_email('welcome', $data['email'], $data);
+//                        $this->_send_email('welcome', $data['email'], $data);
                     }
                     unset($data['password']); // Clear password (just for any case)
 
 //                    $this->_show_message($this->lang->line('auth_message_registration_completed_2') . ' ' . anchor('/auth/login/', 'Login'));
                     // show registration completed
+                    redirect('/auth/');
                 }
             } else {
                 $errors = $this->tank_auth->get_error_message();
