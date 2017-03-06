@@ -42,7 +42,7 @@ class Auth extends MY_Controller
                 $this->config->item('use_username', 'tank_auth'));
             $data['login_by_email'] = $this->config->item('login_by_email', 'tank_auth');
 
-            $this->form_validation->set_rules('login', 'Login', 'trim|required');
+            $this->form_validation->set_rules('login', 'Login', 'trim|required|strtolower');
             $this->form_validation->set_rules('password', 'Password', 'trim|required');
             $this->form_validation->set_rules('remember', 'Remember me', 'integer');
 
