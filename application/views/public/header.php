@@ -67,7 +67,7 @@
             <ul class="nav navbar-nav navbar-right">
                 <li><a href="../navbar-static-top/">Static top</a></li>
                 <li class="active"><a href="./">Fixed top <span class="sr-only">(current)</span></a></li>
-                <li><a href="auth/"><span class="fa fa-sign-in fa-fw"></span>&nbsp;Sign In</a></li>
+                <li><a href="http://localhost:1123/php-ci-test/auth/"><span class="fa fa-sign-in fa-fw"></span>&nbsp;Sign In</a></li>
             </ul>
         </div><!--/.nav-collapse -->
     </div>

@@ -11,6 +11,8 @@ class Register extends MY_Controller
     public function __construct()
     {
         parent::__construct();
+        $this->load->helper('form');
+        $this->load->library('form_validation');
     }
 
     public function index()
@@ -21,7 +23,7 @@ class Register extends MY_Controller
         $ip = $this->input->ip_address();
         $redirectUrl = $this->input->get('redurl');
 
-        // 是否需要显示验证码图片
+        // if need captcha when register
         $show_captcha = false; //$this->access->is_reg_captcha($ip);
 
         $data = array(
@@ -29,17 +31,28 @@ class Register extends MY_Controller
             'show_captcha' => $show_captcha ? 'true' : 'false',
             'selected' => 'home'
         );
+
         $this->load->view('auth/register', $data);
     }
 
     public function submit()
     {
-        $this->load->helper('form');
-        $this->load->library('form_validation');
         $this->load->library('tank_auth');
 
-        $this->form_validation->set_rules('username', 'Username', 'trim|required|min_length[' . $this->config->item('username_min_length', 'tank_auth') . ']|max_length[' . $this->config->item('username_max_length', 'tank_auth') . ']|alpha_dash');
-        $this->form_validation->set_rules('email', 'Email', 'trim|required|valid_email');
+        $ip = $this->input->ip_address();
+        $redurl = $this->input->get_post('redurl') ? $this->input->get_post('redurl') :
+            ($this->input->get('redurl') ? $this->input->get('redurl') : site_url('home/'));
+        $email = $this->input->post('email');
+        $username = $this->input->post('username');
+        $password = $this->input->post('password');
+        $confirm_password = $this->input->post('confirm_password');
+        $callback  = $this->input->get('callback') ?  $this->input->get('callback') :  $this->input->post('callback');
+
+        log_debug(sprintf('[register][submit] ip=%s, email=%s, username=%s, redurl=%s, ',
+            $ip, $email, $username, $redurl));
+
+        $this->form_validation->set_rules('email', 'Email', 'trim|required|valid_email|strtolower');
+        $this->form_validation->set_rules('username', 'Username', 'trim|required|min_length[' . $this->config->item('username_min_length', 'tank_auth') . ']|max_length[' . $this->config->item('username_max_length', 'tank_auth') . ']|alpha_dash|strtolower');
         $this->form_validation->set_rules('password', 'Password', 'trim|required|min_length[' . $this->config->item('password_min_length', 'tank_auth') . ']|max_length[' . $this->config->item('password_max_length', 'tank_auth') . ']|alpha_dash');
         $this->form_validation->set_rules('confirm_password', 'Confirm Password', 'trim|required|matches[password]');
 
@@ -56,7 +69,10 @@ class Register extends MY_Controller
 
         $email_activation = $this->config->item('email_activation', 'tank_auth');
 
-        if ($this->form_validation->run()) {                                // validation ok
+        $validateResult = $this->form_validation->run();
+        log_debug('[register][validation] result='.($validateResult ? 'true' : 'false'));
+
+        if ($validateResult) {                                // validation ok
             if (!is_null($data = $this->tank_auth->create_user(
                 $this->form_validation->set_value('username'),
                 $this->form_validation->set_value('email'),
@@ -86,7 +102,8 @@ class Register extends MY_Controller
 
 //                    $this->_show_message($this->lang->line('auth_message_registration_completed_2') . ' ' . anchor('/auth/login/', 'Login'));
                     // show registration completed
-                    redirect('/auth/');
+//                    redirect('/auth/');
+                    $this->load->view('auth/login');
                 }
             } else {
                 $errors = $this->tank_auth->get_error_message();

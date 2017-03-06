@@ -11,11 +11,11 @@
     <div class="well well-sm">
         <form class="form-horizontal">
             <div class="form-group">
-                <label for="yourName" class="control-label col-sm-3">Username</label>
+                <label for="yourName" class="control-label col-sm-3">Email</label>
                 <div class="col-sm-9">
                     <div class="input-group">
                         <span class="input-group-addon"><i class="fa fa-user fa-fw" aria-hidden="true"></i></span>
-                        <input type="text" class="form-control" id="login" placeholder="Your register email">
+                        <input type="text" class="form-control" id="login" name="login" placeholder="Your register email">
                     </div>
                 </div>
             </div>
@@ -34,12 +34,20 @@
                 <label for="password" class="control-label col-sm-3">Password</label>
                 <div class="col-sm-9">
                     <div class="input-group">
-                        <span class="input-group-addon"><i class="fa fa-envelope-o fa-fw" aria-hidden="true"></i></span>
-                        <input type="password" class="form-control" id="password" placeholder="Your password">
+                        <span class="input-group-addon"><i class="fa fa-lock fa-fw" aria-hidden="true"></i></span>
+                        <input type="password" class="form-control" id="password" name="password" placeholder="Your password">
                     </div>
                 </div>
             </div>
 
+            <div class="form-group">
+                <label for="password" class="control-label col-sm-3">Remember Me</label>
+                <div class="col-sm-9">
+                    <div class="input-group">
+                        <input id="remember_me" name="remember_me" class="form-control" placeholder="" required="" type="checkbox">
+                    </div>
+                </div>
+            </div>
 
             <div class="clearfix form-group">&nbsp;</div>
 
@@ -48,8 +56,17 @@
                     <i class="fa fa-envelope fa-fw"></i>&nbsp;SIGN IN
                 </button>
             </div>
+
+            <div class="text-center col-sm-12 form-group">
+                 <p>
+                     <a href="/php-ci-test/register/">Sigh Up</a> | <a href="#">Forget Password</a>
+                 </p>
+            </div>
+
+
         </form>
         <div class="clearfix">&nbsp;</div>
+
     </div>
 
 </div>
