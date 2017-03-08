@@ -13,6 +13,7 @@ class Register extends MY_Controller
         parent::__construct();
         $this->load->helper('form');
         $this->load->library('form_validation');
+        $this->lang->load('auth');
     }
 
     public function index()
@@ -40,16 +41,16 @@ class Register extends MY_Controller
         $this->load->library('tank_auth');
 
         $ip = $this->input->ip_address();
-        $redurl = $this->input->get_post('redurl') ? $this->input->get_post('redurl') :
-            ($this->input->get('redurl') ? $this->input->get('redurl') : site_url('home/'));
+        $redurl = $this->input->get_post('redurl') ? $this->input->get_post('redurl') : site_url('home/');
         $email = $this->input->post('email');
         $username = $this->input->post('username');
         $password = $this->input->post('password');
         $confirm_password = $this->input->post('confirm_password');
-        $callback  = $this->input->get('callback') ?  $this->input->get('callback') :  $this->input->post('callback');
+//        $callback  = $this->input->get('callback') ?  $this->input->get('callback') :  $this->input->post('callback');
+        $callback  = $this->input->get_post('callback');
 
-        log_debug(sprintf('[register][submit] ip=%s, email=%s, username=%s, redurl=%s, ',
-            $ip, $email, $username, $redurl));
+        log_debug(sprintf('[register][submit] ip=%s, email=%s, username=%s, redurl=%s, callback=%s ',
+            $ip, $email, $username, $redurl, $callback));
 
         $this->form_validation->set_rules('email', 'Email', 'trim|required|valid_email|strtolower');
         $this->form_validation->set_rules('username', 'Username', 'trim|required|min_length[' . $this->config->item('username_min_length', 'tank_auth') . ']|max_length[' . $this->config->item('username_max_length', 'tank_auth') . ']|alpha_dash|strtolower');

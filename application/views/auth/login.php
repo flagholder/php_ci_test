@@ -9,7 +9,7 @@
     </div>
 
     <div class="well well-sm">
-        <form class="form-horizontal" action="/php-ci-test/auth/" method="post">
+        <form class="form-horizontal" action="<?php echo base_url('auth/')?>" method="post">
 
             <div>
                 <?php echo validation_errors(); ?>

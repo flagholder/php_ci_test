@@ -10,7 +10,7 @@ class Auth extends MY_Controller
         $this->load->library('form_validation');
         $this->load->library('tank_auth');
         $this->load->library('xp_auth');
-        $this->lang->load('tank_auth');
+        $this->lang->load('auth');
     }
 
     public function index()
@@ -32,10 +32,10 @@ class Auth extends MY_Controller
     public function login()
     {
         if ($this->tank_auth->is_logged_in()) {                                    // logged in
-            redirect($this->config->item('base_url') . '/home/');
+            redirect(base_url('home/'));
 
-        } elseif ($this->tank_auth->is_logged_in(FALSE)) {                        // logged in, not activated
-            redirect($this->config->item('base_url') . '/auth/send_again/');
+        } elseif ($this->tank_auth->is_logged_in(false)) {                        // logged in, not activated
+            redirect(base_url('auth/send_again/'));
 
         } else {
             $data['login_by_username'] = ($this->config->item('login_by_username', 'tank_auth') AND
@@ -72,12 +72,13 @@ class Auth extends MY_Controller
                     $data['login_by_username'],
                     $data['login_by_email'])
                 ) {                                // success
-                    redirect('');
+                    redirect(base_url('home/'));
 
                 } else {
                     $errors = $this->tank_auth->get_error_message();
                     if (isset($errors['banned'])) {                                // banned user
-                        $this->_show_message($this->lang->line('auth_message_banned') . ' ' . $errors['banned']);
+                        $data['errors'] = $this->lang->line('auth_message_banned') . ' ' . $errors['banned'];
+                        $this->load->view('errors/error_message', $data);
 
                     } elseif (isset($errors['not_activated'])) {                // not activated user
                         redirect('/auth/send_again/');
@@ -108,94 +109,9 @@ class Auth extends MY_Controller
     function logout()
     {
         $this->tank_auth->logout();
-
-        $this->_show_message($this->lang->line('auth_message_logged_out'));
+        redirect(base_url('home/'));
     }
 
-    /**
-     * Register user on the site
-     *
-     * @return void
-     */
-    function register()
-    {
-        if ($this->tank_auth->is_logged_in()) {                                    // logged in
-            redirect('');
-
-        } elseif ($this->tank_auth->is_logged_in(FALSE)) {                        // logged in, not activated
-            redirect('/auth/send_again/');
-
-        } elseif (!$this->config->item('allow_registration', 'tank_auth')) {    // registration is off
-            $this->_show_message($this->lang->line('auth_message_registration_disabled'));
-
-        } else {
-            $use_username = $this->config->item('use_username', 'tank_auth');
-            if ($use_username) {
-                $this->form_validation->set_rules('username', 'Username', 'trim|required|min_length[' . $this->config->item('username_min_length', 'tank_auth') . ']|max_length[' . $this->config->item('username_max_length', 'tank_auth') . ']|alpha_dash');
-            }
-            $this->form_validation->set_rules('email', 'Email', 'trim|required|valid_email');
-            $this->form_validation->set_rules('password', 'Password', 'trim|required|min_length[' . $this->config->item('password_min_length', 'tank_auth') . ']|max_length[' . $this->config->item('password_max_length', 'tank_auth') . ']|alpha_dash');
-            $this->form_validation->set_rules('confirm_password', 'Confirm Password', 'trim|required|matches[password]');
-
-            $captcha_registration = $this->config->item('captcha_registration', 'tank_auth');
-            $use_recaptcha = $this->config->item('use_recaptcha', 'tank_auth');
-            if ($captcha_registration) {
-                if ($use_recaptcha) {
-                    $this->form_validation->set_rules('recaptcha_response_field', 'Confirmation Code', 'trim|required|callback__check_recaptcha');
-                } else {
-                    $this->form_validation->set_rules('captcha', 'Confirmation Code', 'trim|required|callback__check_captcha');
-                }
-            }
-            $data['errors'] = array();
-
-            $email_activation = $this->config->item('email_activation', 'tank_auth');
-
-            if ($this->form_validation->run()) {                                // validation ok
-                if (!is_null($data = $this->tank_auth->create_user(
-                    $use_username ? $this->form_validation->set_value('username') : '',
-                    $this->form_validation->set_value('email'),
-                    $this->form_validation->set_value('password'),
-                    $email_activation))
-                ) {                                    // success
-
-                    $data['site_name'] = $this->config->item('website_name', 'tank_auth');
-
-                    if ($email_activation) {                                    // send "activate" email
-                        $data['activation_period'] = $this->config->item('email_activation_expire', 'tank_auth') / 3600;
-
-                        $this->_send_email('activate', $data['email'], $data);
-
-                        unset($data['password']); // Clear password (just for any case)
-
-                        $this->_show_message($this->lang->line('auth_message_registration_completed_1'));
-
-                    } else {
-                        if ($this->config->item('email_account_details', 'tank_auth')) {    // send "welcome" email
-
-                            $this->_send_email('welcome', $data['email'], $data);
-                        }
-                        unset($data['password']); // Clear password (just for any case)
-
-                        $this->_show_message($this->lang->line('auth_message_registration_completed_2') . ' ' . anchor('/auth/login/', 'Login'));
-                    }
-                } else {
-                    $errors = $this->tank_auth->get_error_message();
-                    foreach ($errors as $k => $v) $data['errors'][$k] = $this->lang->line($v);
-                }
-            }
-            if ($captcha_registration) {
-                if ($use_recaptcha) {
-                    $data['recaptcha_html'] = $this->_create_recaptcha();
-                } else {
-                    $data['captcha_html'] = $this->_create_captcha();
-                }
-            }
-            $data['use_username'] = $use_username;
-            $data['captcha_registration'] = $captcha_registration;
-            $data['use_recaptcha'] = $use_recaptcha;
-            $this->load->view('auth/register_form', $data);
-        }
-    }
 
     /**
      * Send activation email again, to the same or new email address
@@ -463,17 +379,6 @@ class Auth extends MY_Controller
         }
     }
 
-    /**
-     * Show info message
-     *
-     * @param    string
-     * @return    void
-     */
-    function _show_message($message)
-    {
-        $this->session->set_flashdata('message', $message);
-        redirect('/auth/');
-    }
 
     /**
      * Send email message of given type (activate, forgot_password, etc.)
@@ -591,6 +496,108 @@ class Auth extends MY_Controller
         return TRUE;
     }
 
+
+
+
+    /*---------------- Useless method -------------------*/
+
+    /**
+     * Show info message
+     *
+     * @param    string
+     * @return    void
+     */
+    function _show_message($message)
+    {
+        $this->session->set_flashdata('message', $message);
+        redirect('/auth/');
+    }
+
+
+    /**
+     * Register user on the site
+     *
+     * @return void
+     */
+    function register()
+    {
+        if ($this->tank_auth->is_logged_in()) {                                    // logged in
+            redirect('');
+
+        } elseif ($this->tank_auth->is_logged_in(FALSE)) {                        // logged in, not activated
+            redirect('/auth/send_again/');
+
+        } elseif (!$this->config->item('allow_registration', 'tank_auth')) {    // registration is off
+            $this->_show_message($this->lang->line('auth_message_registration_disabled'));
+
+        } else {
+            $use_username = $this->config->item('use_username', 'tank_auth');
+            if ($use_username) {
+                $this->form_validation->set_rules('username', 'Username', 'trim|required|min_length[' . $this->config->item('username_min_length', 'tank_auth') . ']|max_length[' . $this->config->item('username_max_length', 'tank_auth') . ']|alpha_dash');
+            }
+            $this->form_validation->set_rules('email', 'Email', 'trim|required|valid_email');
+            $this->form_validation->set_rules('password', 'Password', 'trim|required|min_length[' . $this->config->item('password_min_length', 'tank_auth') . ']|max_length[' . $this->config->item('password_max_length', 'tank_auth') . ']|alpha_dash');
+            $this->form_validation->set_rules('confirm_password', 'Confirm Password', 'trim|required|matches[password]');
+
+            $captcha_registration = $this->config->item('captcha_registration', 'tank_auth');
+            $use_recaptcha = $this->config->item('use_recaptcha', 'tank_auth');
+            if ($captcha_registration) {
+                if ($use_recaptcha) {
+                    $this->form_validation->set_rules('recaptcha_response_field', 'Confirmation Code', 'trim|required|callback__check_recaptcha');
+                } else {
+                    $this->form_validation->set_rules('captcha', 'Confirmation Code', 'trim|required|callback__check_captcha');
+                }
+            }
+            $data['errors'] = array();
+
+            $email_activation = $this->config->item('email_activation', 'tank_auth');
+
+            if ($this->form_validation->run()) {                                // validation ok
+                if (!is_null($data = $this->tank_auth->create_user(
+                    $use_username ? $this->form_validation->set_value('username') : '',
+                    $this->form_validation->set_value('email'),
+                    $this->form_validation->set_value('password'),
+                    $email_activation))
+                ) {                                    // success
+
+                    $data['site_name'] = $this->config->item('website_name', 'tank_auth');
+
+                    if ($email_activation) {                                    // send "activate" email
+                        $data['activation_period'] = $this->config->item('email_activation_expire', 'tank_auth') / 3600;
+
+                        $this->_send_email('activate', $data['email'], $data);
+
+                        unset($data['password']); // Clear password (just for any case)
+
+                        $this->_show_message($this->lang->line('auth_message_registration_completed_1'));
+
+                    } else {
+                        if ($this->config->item('email_account_details', 'tank_auth')) {    // send "welcome" email
+
+                            $this->_send_email('welcome', $data['email'], $data);
+                        }
+                        unset($data['password']); // Clear password (just for any case)
+
+                        $this->_show_message($this->lang->line('auth_message_registration_completed_2') . ' ' . anchor('/auth/login/', 'Login'));
+                    }
+                } else {
+                    $errors = $this->tank_auth->get_error_message();
+                    foreach ($errors as $k => $v) $data['errors'][$k] = $this->lang->line($v);
+                }
+            }
+            if ($captcha_registration) {
+                if ($use_recaptcha) {
+                    $data['recaptcha_html'] = $this->_create_recaptcha();
+                } else {
+                    $data['captcha_html'] = $this->_create_captcha();
+                }
+            }
+            $data['use_username'] = $use_username;
+            $data['captcha_registration'] = $captcha_registration;
+            $data['use_recaptcha'] = $use_recaptcha;
+            $this->load->view('auth/register_form', $data);
+        }
+    }
 }
 
 /* End of file auth.php */

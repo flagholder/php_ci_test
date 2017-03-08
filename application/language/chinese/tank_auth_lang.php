@@ -36,5 +36,5 @@ $lang['auth_subject_reset_password'] = '您的新密码  %s';
 $lang['auth_subject_change_email'] = '您的新电子邮件 %s';
 
 
-/* End of file tank_auth_lang.php */
-/* Location: ./application/language/chinese/tank_auth_lang.php */
+/* End of file auth_lang.php */
+/* Location: ./application/language/chinese/auth_lang.php */
