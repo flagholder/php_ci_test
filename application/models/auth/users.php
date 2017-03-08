@@ -12,16 +12,17 @@
  */
 class Users extends CI_Model
 {
-	private $table_name			= 'users';			// user accounts
-	private $profile_table_name	= 'user_profiles';	// user profiles
+	private $table_users			= 'users';			// user accounts
+	private $table_user_profiles	= 'user_profiles';	// user profiles
+    private $db_prefix              = 'xp_';
 
 	function __construct()
 	{
 		parent::__construct();
 
 		$ci =& get_instance();
-		$this->table_name			= $ci->config->item('db_table_prefix', 'tank_auth').$this->table_name;
-		$this->profile_table_name	= $ci->config->item('db_table_prefix', 'tank_auth').$this->profile_table_name;
+		$this->table_users			= $this->db_prefix.$this->table_users;
+		$this->table_user_profiles	= $this->db_prefix.$this->table_user_profiles;
 	}
 
 	/**
@@ -36,9 +37,11 @@ class Users extends CI_Model
 		$this->db->where('id', $user_id);
 		$this->db->where('activated', $activated ? 1 : 0);
 
-		$query = $this->db->get($this->table_name);
-		if ($query->num_rows() == 1) return $query->row();
-		return NULL;
+		$query = $this->db->get($this->table_users);
+		if ($query->num_rows() == 1)
+		    return $query->row();
+
+        return null;
 	}
 
 	/**
@@ -52,7 +55,7 @@ class Users extends CI_Model
 		$this->db->where('LOWER(username)=', strtolower($login));
 		$this->db->or_where('LOWER(email)=', strtolower($login));
 
-		$query = $this->db->get($this->table_name);
+		$query = $this->db->get($this->table_users);
 		if ($query->num_rows() == 1) return $query->row();
 		return NULL;
 	}
@@ -67,7 +70,7 @@ class Users extends CI_Model
 	{
 		$this->db->where('LOWER(username)=', strtolower($username));
 
-		$query = $this->db->get($this->table_name);
+		$query = $this->db->get($this->table_users);
 		if ($query->num_rows() == 1) return $query->row();
 		return NULL;
 	}
@@ -82,7 +85,7 @@ class Users extends CI_Model
 	{
 		$this->db->where('LOWER(email)=', strtolower($email));
 
-		$query = $this->db->get($this->table_name);
+		$query = $this->db->get($this->table_users);
 		if ($query->num_rows() == 1) return $query->row();
 		return NULL;
 	}
@@ -98,7 +101,7 @@ class Users extends CI_Model
 		$this->db->select('1', FALSE);
 		$this->db->where('LOWER(username)=', strtolower($username));
 
-		$query = $this->db->get($this->table_name);
+		$query = $this->db->get($this->table_users);
 		return $query->num_rows() == 0;
 	}
 
@@ -108,13 +111,13 @@ class Users extends CI_Model
 	 * @param	string
 	 * @return	bool
 	 */
-	function is_email_available($email)
+	public function isEmailAvailable($email)
 	{
 		$this->db->select('1', FALSE);
-		$this->db->where('LOWER(email)=', strtolower($email));
-		$this->db->or_where('LOWER(new_email)=', strtolower($email));
+		$this->db->where('email = ', $email);
+//		$this->db->or_where('LOWER(new_email)=', strtolower($email));
 
-		$query = $this->db->get($this->table_name);
+		$query = $this->db->get($this->table_users);
 		return $query->num_rows() == 0;
 	}
 
@@ -125,17 +128,19 @@ class Users extends CI_Model
 	 * @param	bool
 	 * @return	array
 	 */
-	function create_user($data, $activated = TRUE)
+	public function createUser($data, $activated = false)
 	{
-		$data['created'] = date('Y-m-d H:i:s');
-		$data['activated'] = $activated ? 1 : 0;
+//		$data['created_at'] = date('Y-m-d H:i:s');
+//		$data['status'] = $activated ? 2 : 1;
 
-		if ($this->db->insert($this->table_name, $data)) {
+		if ($this->db->insert($this->table_users, $data)) {
 			$user_id = $this->db->insert_id();
-			if ($activated)	$this->create_profile($user_id);
-			return array('user_id' => $user_id);
+			if ($activated)
+			    $this->create_profile($user_id);
+
+            return array('user_id' => $user_id);
 		}
-		return NULL;
+		return null;
 	}
 
 	/**
@@ -157,14 +162,14 @@ class Users extends CI_Model
 			$this->db->where('new_password_key', $activation_key);
 		}
 		$this->db->where('activated', 0);
-		$query = $this->db->get($this->table_name);
+		$query = $this->db->get($this->table_users);
 
 		if ($query->num_rows() == 1) {
 
 			$this->db->set('activated', 1);
 			$this->db->set('new_email_key', NULL);
 			$this->db->where('id', $user_id);
-			$this->db->update($this->table_name);
+			$this->db->update($this->table_users);
 
 			$this->create_profile($user_id);
 			return TRUE;
@@ -172,35 +177,6 @@ class Users extends CI_Model
 		return FALSE;
 	}
 
-	/**
-	 * Purge table of non-activated users
-	 *
-	 * @param	int
-	 * @return	void
-	 */
-	function purge_na($expire_period = 172800)
-	{
-		$this->db->where('activated', 0);
-		$this->db->where('UNIX_TIMESTAMP(created) <', time() - $expire_period);
-		$this->db->delete($this->table_name);
-	}
-
-	/**
-	 * Delete user record
-	 *
-	 * @param	int
-	 * @return	bool
-	 */
-	function delete_user($user_id)
-	{
-		$this->db->where('id', $user_id);
-		$this->db->delete($this->table_name);
-		if ($this->db->affected_rows() > 0) {
-			$this->delete_profile($user_id);
-			return TRUE;
-		}
-		return FALSE;
-	}
 
 	/**
 	 * Set new password key for user.
@@ -216,7 +192,7 @@ class Users extends CI_Model
 		$this->db->set('new_password_requested', date('Y-m-d H:i:s'));
 		$this->db->where('id', $user_id);
 
-		$this->db->update($this->table_name);
+		$this->db->update($this->table_users);
 		return $this->db->affected_rows() > 0;
 	}
 
@@ -235,7 +211,7 @@ class Users extends CI_Model
 		$this->db->where('new_password_key', $new_pass_key);
 		$this->db->where('UNIX_TIMESTAMP(new_password_requested) >', time() - $expire_period);
 
-		$query = $this->db->get($this->table_name);
+		$query = $this->db->get($this->table_users);
 		return $query->num_rows() == 1;
 	}
 
@@ -257,7 +233,7 @@ class Users extends CI_Model
 		$this->db->where('new_password_key', $new_pass_key);
 		$this->db->where('UNIX_TIMESTAMP(new_password_requested) >=', time() - $expire_period);
 
-		$this->db->update($this->table_name);
+		$this->db->update($this->table_users);
 		return $this->db->affected_rows() > 0;
 	}
 
@@ -273,7 +249,7 @@ class Users extends CI_Model
 		$this->db->set('password', $new_pass);
 		$this->db->where('id', $user_id);
 
-		$this->db->update($this->table_name);
+		$this->db->update($this->table_users);
 		return $this->db->affected_rows() > 0;
 	}
 
@@ -294,7 +270,7 @@ class Users extends CI_Model
 		$this->db->where('id', $user_id);
 		$this->db->where('activated', $activated ? 1 : 0);
 
-		$this->db->update($this->table_name);
+		$this->db->update($this->table_users);
 		return $this->db->affected_rows() > 0;
 	}
 
@@ -313,7 +289,7 @@ class Users extends CI_Model
 		$this->db->where('id', $user_id);
 		$this->db->where('new_email_key', $new_email_key);
 
-		$this->db->update($this->table_name);
+		$this->db->update($this->table_users);
 		return $this->db->affected_rows() > 0;
 	}
 
@@ -335,7 +311,7 @@ class Users extends CI_Model
 		if ($record_time)	$this->db->set('last_login', date('Y-m-d H:i:s'));
 
 		$this->db->where('id', $user_id);
-		$this->db->update($this->table_name);
+		$this->db->update($this->table_users);
 	}
 
 	/**
@@ -343,30 +319,32 @@ class Users extends CI_Model
 	 *
 	 * @param	int
 	 * @param	string
-	 * @return	void
+	 * @return	bool
 	 */
-	function ban_user($user_id, $reason = NULL)
+	function banUser($user_id, $reason = '')
 	{
 		$this->db->where('id', $user_id);
-		$this->db->update($this->table_name, array(
-			'banned'		=> 1,
-			'ban_reason'	=> $reason,
+		$this->db->update($this->table_users, array(
+			'status'		=> 3,
 		));
+
+        return $this->db->affected_rows() > 0;
 	}
 
 	/**
 	 * Unban user
 	 *
 	 * @param	int
-	 * @return	void
+	 * @return	bool
 	 */
-	function unban_user($user_id)
+	function unbanUser($user_id)
 	{
 		$this->db->where('id', $user_id);
-		$this->db->update($this->table_name, array(
-			'banned'		=> 0,
-			'ban_reason'	=> NULL,
+		$this->db->update($this->table_users, array(
+			'status'		=> 1,
 		));
+
+        return $this->db->affected_rows() > 0;
 	}
 
 	/**
@@ -375,23 +353,13 @@ class Users extends CI_Model
 	 * @param	int
 	 * @return	bool
 	 */
-	private function create_profile($user_id)
+	private function createProfile($user_id)
 	{
 		$this->db->set('user_id', $user_id);
-		return $this->db->insert($this->profile_table_name);
+		return $this->db->insert($this->table_user_profiles);
 	}
 
-	/**
-	 * Delete user profile
-	 *
-	 * @param	int
-	 * @return	void
-	 */
-	private function delete_profile($user_id)
-	{
-		$this->db->where('user_id', $user_id);
-		$this->db->delete($this->profile_table_name);
-	}
+
 }
 
 /* End of file users.php */

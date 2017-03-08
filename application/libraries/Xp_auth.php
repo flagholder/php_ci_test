@@ -37,7 +37,7 @@ class Xp_auth
         $this->ci->load->config('tank_auth', TRUE);
         $this->ci->load->library('session');
         $this->ci->load->database();
-        $this->ci->load->model('tank_auth/users');
+        $this->ci->load->model('auth/users');
 
         // Try to auto login
         $loginResult = $this->autoLogin();
@@ -136,6 +136,47 @@ class Xp_auth
         $this->ci->session->set_userdata(array('user_id' => '', 'username' => '', 'status' => ''));
 
         $this->ci->session->sess_destroy();
+    }
+
+
+    /**
+     * Create new user on the site and return some data about it:
+     * user_id, username, password, email, new_email_key (if any).
+     *
+     * @param	string
+     * @param	string
+     * @param	string
+     * @param   string
+     * @param	bool
+     * @return	array
+     */
+    function createUser($username, $email, $password, $ip, $email_activation=true)
+    {
+        if (! $this->ci->users->isEmailAvailable($email)) {
+            $this->error = array('email' => 'auth_email_in_use');
+
+        } else {
+            $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+
+            $data = array(
+                'email'		=> $email,
+                'username'	=> $username,
+                'password'	=> $hashed_password,
+                'status'    => $email_activation ? 1 : 2,
+                'last_ip'	=> $ip,
+            );
+
+            if ($email_activation) {
+                $data['new_email_key'] = md5(rand().microtime());
+            }
+            if (!is_null($res = $this->ci->users->create_user($data, !$email_activation))) {
+                $data['user_id'] = $res['user_id'];
+                $data['password'] = $password;
+                unset($data['last_ip']);
+                return $data;
+            }
+        }
+        return null;
     }
 
 }
