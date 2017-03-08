@@ -38,7 +38,7 @@ class Register extends MY_Controller
 
     public function submit()
     {
-        $this->load->library('tank_auth');
+        $this->load->library('xp_auth');
 
         $ip = $this->input->ip_address();
         $redurl = $this->input->get_post('redurl') ? $this->input->get_post('redurl') : site_url('home/');
@@ -74,7 +74,7 @@ class Register extends MY_Controller
         log_debug('[register][validation] result='.($validateResult ? 'true' : 'false'));
 
         if ($validateResult) {                                // validation ok
-            if (!is_null($data = $this->tank_auth->create_user(
+            if (!is_null($data = $this->xp_auth->createUser(
                 $this->form_validation->set_value('username'),
                 $this->form_validation->set_value('email'),
                 $this->form_validation->set_value('password'),
@@ -107,7 +107,7 @@ class Register extends MY_Controller
                     $this->load->view('auth/login');
                 }
             } else {
-                $errors = $this->tank_auth->get_error_message();
+                $errors = $this->xp_auth->get_error_message();
                 foreach ($errors as $k => $v) $data['errors'][$k] = $this->lang->line($v);
             }
         }

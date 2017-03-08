@@ -150,7 +150,7 @@ class Xp_auth
      * @param	bool
      * @return	array
      */
-    function createUser($username, $email, $password, $ip, $email_activation=true)
+    function createUser($username, $email, $password, $ip, $email_activation=false)
     {
         if (! $this->ci->users->isEmailAvailable($email)) {
             $this->error = array('email' => 'auth_email_in_use');
@@ -169,7 +169,7 @@ class Xp_auth
             if ($email_activation) {
                 $data['new_email_key'] = md5(rand().microtime());
             }
-            if (!is_null($res = $this->ci->users->create_user($data, !$email_activation))) {
+            if (!is_null($res = $this->ci->users->createUser($data, !$email_activation))) {
                 $data['user_id'] = $res['user_id'];
                 $data['password'] = $password;
                 unset($data['last_ip']);
@@ -178,5 +178,17 @@ class Xp_auth
         }
         return null;
     }
+
+    /**
+     * Get error message.
+     * Can be invoked after any failed operation such as login or register.
+     *
+     * @return	string
+     */
+    function get_error_message()
+    {
+        return $this->error;
+    }
+
 
 }

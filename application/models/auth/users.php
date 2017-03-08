@@ -135,6 +135,7 @@ class Users extends CI_Model
 
 		if ($this->db->insert($this->table_users, $data)) {
 			$user_id = $this->db->insert_id();
+            $activated = false;
 			if ($activated)
 			    $this->create_profile($user_id);
 
@@ -171,7 +172,7 @@ class Users extends CI_Model
 			$this->db->where('id', $user_id);
 			$this->db->update($this->table_users);
 
-			$this->create_profile($user_id);
+			$this->createProfile($user_id);
 			return TRUE;
 		}
 		return FALSE;
