@@ -12,11 +12,11 @@ class Home extends MY_Controller
     public function __construct()
     {
         parent::__construct(false);
-        $this->load->library('xp_auth');
     }
 
     public function index()
     {
+        $this->load->library('xp_auth');
         $data = array(
             'selected' => 'home'
         );
@@ -26,8 +26,5 @@ class Home extends MY_Controller
         } else {
             redirect('/auth/login');
         }
-
-
     }
-
 }

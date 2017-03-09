@@ -70,7 +70,8 @@ class Auth extends MY_Controller
                     $this->form_validation->set_value('password'),
                     $this->form_validation->set_value('remember'),
                     $data['login_by_username'],
-                    $data['login_by_email'])
+                    $data['login_by_email']
+                )
                 ) {                                // success
                     redirect(base_url('home/'));
 

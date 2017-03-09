@@ -1,13 +1,33 @@
 <?php
 
+if (defined('BASEPATH') === false) {
+    exit('No direct script access allowed');
+}
+
+/**
+ * MyClass File Doc Comment
+ *
+ * @category  MyClass
+ * @package   MyPackage
+ * @author    Jerry Shen
+ * @license
+ * @link
+ *
+ */
+
 /**
  * Created by PhpStorm.
  * User: jeshen
  * Date: 3/3/2017
  * Time: 3:11 PM
  */
+
 class Register extends MY_Controller
 {
+    /**
+     * Construction
+     *
+     */
     public function __construct()
     {
         parent::__construct();
@@ -16,26 +36,34 @@ class Register extends MY_Controller
         $this->lang->load('auth');
     }
 
+    /**
+     * Index page, show registration form
+     *
+     * @return void
+     */
     public function index()
     {
         // TODO
         // check if user login or not ?
-
-        $ip = $this->input->ip_address();
-        $redirectUrl = $this->input->get('redurl');
+        $redirectUrl = $this->input->get_post('redurl');
 
         // if need captcha when register
         $show_captcha = false; //$this->access->is_reg_captcha($ip);
 
         $data = array(
-            'redurl' => $redirectUrl,
-            'show_captcha' => $show_captcha ? 'true' : 'false',
-            'selected' => 'home'
+            'redurl'        => $redirectUrl,
+            'show_captcha'  => $show_captcha ? 'true' : 'false',
+            'selected'      => 'home'
         );
 
         $this->load->view('auth/register', $data);
     }
 
+    /**
+     * Create a new account
+     *
+     * @return void
+     */
     public function submit()
     {
         $this->load->library('xp_auth');
@@ -44,85 +72,102 @@ class Register extends MY_Controller
         $redurl = $this->input->get_post('redurl') ? $this->input->get_post('redurl') : site_url('home/');
         $email = $this->input->post('email');
         $username = $this->input->post('username');
-        $password = $this->input->post('password');
-        $confirm_password = $this->input->post('confirm_password');
-//        $callback  = $this->input->get('callback') ?  $this->input->get('callback') :  $this->input->post('callback');
         $callback  = $this->input->get_post('callback');
 
-        log_debug(sprintf('[register][submit] ip=%s, email=%s, username=%s, redurl=%s, callback=%s ',
-            $ip, $email, $username, $redurl, $callback));
+        log_info(
+            sprintf(
+                '[register][submit] ip=%s, email=%s, username=%s, redurl=%s, callback=%s ',
+                $ip,
+                $email,
+                $username,
+                $redurl,
+                $callback
+            )
+        );
 
         $this->form_validation->set_rules('email', 'Email', 'trim|required|valid_email|strtolower');
-        $this->form_validation->set_rules('username', 'Username', 'trim|required|min_length[' . $this->config->item('username_min_length', 'tank_auth') . ']|max_length[' . $this->config->item('username_max_length', 'tank_auth') . ']|alpha_dash|strtolower');
-        $this->form_validation->set_rules('password', 'Password', 'trim|required|min_length[' . $this->config->item('password_min_length', 'tank_auth') . ']|max_length[' . $this->config->item('password_max_length', 'tank_auth') . ']|alpha_dash');
+        $this->form_validation->set_rules(
+            'username',
+            'Username',
+            'trim|required|min_length[' . $this->config->item('username_min_length', 'xp_config') . ']|max_length[' . $this->config->item('username_max_length', 'xp_config') . ']|alpha_dash|strtolower'
+        );
+        $this->form_validation->set_rules(
+            'password',
+            'Password',
+            'trim|required|min_length[' . $this->config->item('password_min_length', 'xp_config') . ']|max_length[' . $this->config->item('password_max_length', 'xp_config') . ']|alpha_dash'
+        );
         $this->form_validation->set_rules('confirm_password', 'Confirm Password', 'trim|required|matches[password]');
 
-        $captcha_registration = $this->config->item('captcha_registration', 'tank_auth');
-        $use_recaptcha = $this->config->item('use_recaptcha', 'tank_auth');
-        if ($captcha_registration) {
-            if ($use_recaptcha) {
-                $this->form_validation->set_rules('recaptcha_response_field', 'Confirmation Code', 'trim|required|callback__check_recaptcha');
+        $captchaRegistration = $this->config->item('captcha_registration', 'xp_config');
+        $useRecaptcha = $this->config->item('use_recaptcha', 'xp_config');
+        if ($captchaRegistration) {
+            if ($useRecaptcha) {
+                $this->form_validation->set_rules(
+                    'recaptcha_response_field',
+                    'Confirmation Code',
+                    'trim|required|callback__check_recaptcha'
+                );
             } else {
-                $this->form_validation->set_rules('captcha', 'Confirmation Code', 'trim|required|callback__check_captcha');
+                $this->form_validation->set_rules(
+                    'captcha',
+                    'Confirmation Code',
+                    'trim|required|callback__check_captcha'
+                );
             }
         }
+
         $data['errors'] = array();
-
-        $email_activation = $this->config->item('email_activation', 'tank_auth');
-
+        $email_activation = $this->config->item('email_activation', 'xp_config');
         $validateResult = $this->form_validation->run();
-        log_debug('[register][validation] result='.($validateResult ? 'true' : 'false'));
+        log_info('[register][validation] result='.($validateResult ? 'true' : 'false'));
 
-        if ($validateResult) {                                // validation ok
-            if (!is_null($data = $this->xp_auth->createUser(
+        if ($validateResult) {
+            // validation ok
+            $data = $this->xp_auth->createUser(
                 $this->form_validation->set_value('username'),
                 $this->form_validation->set_value('email'),
                 $this->form_validation->set_value('password'),
-                $email_activation))
-            ) {                                    // success
+                $email_activation
+            );
 
+            if (!is_null($data)) {
+                // create user success
                 $data['site_name'] = $this->config->item('website_name', 'tank_auth');
-
-                if ($email_activation) {                                    // send "activate" email
+                if ($email_activation) {
+                    // send activation email
                     $data['activation_period'] = $this->config->item('email_activation_expire', 'tank_auth') / 3600;
 
 //                    $this->_send_email('activate', $data['email'], $data);
-
-                    unset($data['password']); // Clear password (just for any case)
-
-//                    $this->_show_message($this->lang->line('auth_message_registration_completed_1'));
+                    unset($data['password']);
                     // show registration completed
                     redirect('/auth/');
-
                 } else {
                     if ($this->config->item('email_account_details', 'tank_auth')) {    // send "welcome" email
 
 //                        $this->_send_email('welcome', $data['email'], $data);
                     }
-                    unset($data['password']); // Clear password (just for any case)
-
-//                    $this->_show_message($this->lang->line('auth_message_registration_completed_2') . ' ' . anchor('/auth/login/', 'Login'));
+                    unset($data['password']);
                     // show registration completed
-//                    redirect('/auth/');
                     $this->load->view('auth/login');
+                    return;
                 }
             } else {
-                $errors = $this->xp_auth->get_error_message();
-                foreach ($errors as $k => $v) $data['errors'][$k] = $this->lang->line($v);
+                $errors = $this->xp_auth->getErrorMessage();
+                foreach ($errors as $k => $v) {
+                    $data['errors'][$k] = $this->lang->line($v);
+                }
             }
         }
-        if ($captcha_registration) {
-            if ($use_recaptcha) {
-                $data['recaptcha_html'] = $this->_create_recaptcha();
+        if ($captchaRegistration) {
+            if ($useRecaptcha) {
+                $data['recaptcha_html'] = $this->xp_auth->createRecaptcha();
             } else {
-                $data['captcha_html'] = $this->_create_captcha();
+                $data['captcha_html'] = $this->xp_auth->createCaptcha();
             }
         }
 //        $data['use_username'] = $use_username;
-        $data['captcha_registration'] = $captcha_registration;
-        $data['use_recaptcha'] = $use_recaptcha;
+        $data['captcha_registration'] = $captchaRegistration;
+        $data['use_recaptcha'] = $useRecaptcha;
         $this->load->view('auth/register', $data);
     }
-
-
 }
