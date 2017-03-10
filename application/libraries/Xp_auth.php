@@ -48,8 +48,6 @@ class Xp_auth
     {
         if (!$this->isLoggedIn() and !$this->isLoggedIn(false)) {
             // not logged in (as any user)
-
-//            $this->ci->load->helper('cookie');
             if ($cookie = get_cookie($this->ci->config->item('autologin_cookie_name', 'xp_config'), true)) {
                 $data = unserialize($cookie);
 
@@ -60,7 +58,7 @@ class Xp_auth
                         $this->ci->session->set_userdata(array(
                             'user_id' => $user->id,
                             'username' => $user->username,
-                            'status' => DEF::USER_STATUS_ACTIVATED,
+                            'status' => $user->status,
                         ));
 
                         // Renew users cookie to prevent it from expiring
@@ -69,12 +67,10 @@ class Xp_auth
                             'value' => $cookie,
                             'expire' => $this->ci->config->item('autologin_cookie_life', 'xp_config'),
                         ));
-
-                        $this->ci->users->update_login_info($user->id);
+                        $this->ci->users->updateLoginInfo($user->id);
 
                         // Todo:
                         // - add login history?
-
                         return true;
                     }
                 }
@@ -92,7 +88,7 @@ class Xp_auth
     public function isLoggedIn($activated = true)
     {
 //        log_debug('session status :'.$this->ci->session->userdata('status').' - '.DEF::USER_STATUS_ACTIVATED);
-        $activated = $activated ? (string)DEF::USER_STATUS_ACTIVATED : (string)DEF::USER_STATUS_NOT_ACTIVATED;
+        $activated = $activated ? DEF::USER_STATUS_ACTIVATED : DEF::USER_STATUS_NOT_ACTIVATED;
         return $this->ci->session->userdata('status') === $activated;
     }
 
@@ -114,10 +110,10 @@ class Xp_auth
      * Login user on the site. Return TRUE if login is successful
      * (user exists and activated, password is correct), otherwise FALSE.
      *
-     * @param    string (username or email or both depending on settings in config file)
-     * @param    string
-     * @param    bool
-     * @return    bool
+     * @param   string (username or email or both depending on settings in config file)
+     * @param   string
+     * @param   bool
+     * @return  bool
      */
     public function login($login, $password, $remember)
     {
@@ -126,46 +122,121 @@ class Xp_auth
 
             if (!is_null($user = $this->ci->users->$get_user_func($login))) {
                 // Find user by email successfully
-
-                // Does password match hash in database?
-
-                if ($hasher->CheckPassword($password, $user->password)) {        // password ok
-
-                    if ($user->banned == 1) {                                    // fail - banned
-                        $this->error = array('banned' => $user->ban_reason);
-
+                // Check password hash
+                if (password_verify($password, $user->password)) {
+                    // password ok
+                    log_debug('[login][users] '.$user->status);
+                    if ($user->status == intval(DEF::USER_STATUS_BANNED)) {
+                        $this->error = array('banned' => 'Sorry, this account was banned.');
                     } else {
                         $this->ci->session->set_userdata(array(
                             'user_id' => $user->id,
                             'username' => $user->username,
-                            'status' => ($user->activated == 1) ? STATUS_ACTIVATED : STATUS_NOT_ACTIVATED,
+                            'email' => $user->email,
+                            'status' => $user->status,
                         ));
 
-                        if ($user->activated == 0) {                            // fail - not activated
+                        if ($this->ci->config->item('email_activation', 'xp_config')  and
+                            $user->status == intval(DEF::USER_STATUS_NOT_ACTIVATED)) {
+                            // fail - not activated
                             $this->error = array('not_activated' => '');
-
-                        } else {                                                // success
+                        } else {
+                            // success
                             if ($remember) {
-                                $this->create_autologin($user->id);
+                                $this->createAutoLogin($user->id);
                             }
-
-                            $this->clear_login_attempts($login);
-
-                            $this->ci->users->update_login_info(
-                                $user->id,
-                                $this->ci->config->item('login_record_ip', 'tank_auth'),
-                                $this->ci->config->item('login_record_time', 'tank_auth'));
-                            return TRUE;
+                            $this->clearLoginAttempts($login);
+                            $this->ci->users->updateLoginInfo($user->id);
+                            return true;
                         }
                     }
-                } else {                                                        // fail - wrong password
-                    $this->increase_login_attempt($login);
+                } else {
+                    // fail - wrong password
+                    $this->increaseLoginAttempt($login);
                     $this->error = array('password' => 'auth_incorrect_password');
                 }
-            } else {                                                            // fail - wrong login
-                $this->increase_login_attempt($login);
+            } else {
+                // fail - wrong login
+                $this->increaseLoginAttempt($login);
                 $this->error = array('login' => 'auth_incorrect_login');
             }
+        }
+        return false;
+    }
+
+
+    /**
+     * Save data for user's autologin
+     *
+     * @param   int
+     * @return  bool
+     */
+    private function createAutoLogin($user_id)
+    {
+        $key = substr(md5(uniqid(rand() . get_cookie($this->ci->config->item('sess_cookie_name')))), 0, 16);
+
+        $this->ci->load->model('auth/user_autologin');
+        $this->ci->user_autologin->purge($user_id);
+
+        if ($this->ci->user_autologin->set($user_id, md5($key))) {
+            set_cookie(array(
+                'name' => $this->ci->config->item('autologin_cookie_name', 'xp_config'),
+                'value' => serialize(array('user_id' => $user_id, 'key' => $key)),
+                'expire' => $this->ci->config->item('autologin_cookie_life', 'xp_config'),
+            ));
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Clear all attempt records for given IP-address and login
+     * (if attempts to login is being counted)
+     *
+     * @param   string
+     * @return  void
+     */
+    private function clearLoginAttempts($login)
+    {
+        if ($this->ci->config->item('login_count_attempts', 'xp_config')) {
+            $this->ci->load->model('auth/login_attempts');
+            $this->ci->login_attempts->clearAttempts(
+                $this->ci->input->ip_address(),
+                $login,
+                $this->ci->config->item('login_attempt_expire', 'xp_config')
+            );
+        }
+    }
+
+    /**
+     * Increase number of attempts for given IP-address and login
+     * (if attempts to login is being counted)
+     *
+     * @param   string
+     * @return  void
+     */
+    private function increaseLoginAttempt($login)
+    {
+        if ($this->ci->config->item('login_count_attempts', 'xp_config')) {
+            if (!$this->isMaxLoginAttemptsExceeded($login)) {
+                $this->ci->load->model('auth/login_attempts');
+                $this->ci->login_attempts->increaseAttempt($this->ci->input->ip_address(), $login);
+            }
+        }
+    }
+
+    /**
+     * Check if login attempts exceeded max login attempts (specified in config)
+     *
+     * @param   string
+     * @return  bool
+     */
+    public function isMaxLoginAttemptsExceeded($login)
+    {
+        if ($this->ci->config->item('login_count_attempts', 'xp_config')) {
+            $this->ci->load->model('auth/login_attempts');
+            $currentLoginAttempts = $this->ci->login_attempts->getAttemptsNum($this->ci->input->ip_address(), $login);
+            return $currentLoginAttempts >= $this->ci->config->item('login_max_attempts', 'xp_config');
         }
         return false;
     }
@@ -177,12 +248,11 @@ class Xp_auth
      */
     public function logout()
     {
-        $this->delete_autologin();
+        $this->deleteAutologin();
         // See http://codeigniter.com/forums/viewreply/662369/ as the reason for the next line
         $this->ci->session->set_userdata(array('user_id' => '', 'username' => '', 'status' => ''));
         $this->ci->session->sess_destroy();
     }
-
 
     /**
      * Create new user on the site and return some data about it:
@@ -298,8 +368,8 @@ class Xp_auth
         );
 
         $this->ci->email->reply_to(
-            $this->ci->config->item('webmaster_email', 'tank_auth'),
-            $this->ci->config->item('website_name', 'tank_auth')
+            $this->ci->config->item('webmaster_email', 'xp_config'),
+            $this->ci->config->item('website_name', 'xp_config')
         );
         $this->ci->email->to($email);
         $this->ci->email->subject(
@@ -313,57 +383,5 @@ class Xp_auth
         // TODO: unmark line below to send email
 //        $this->ci->email->send();
         log_debug('[auth][send_email] ' . $type . ' ' . $email);
-    }
-
-    /**
-     * Check if login attempts exceeded max login attempts (specified in config)
-     *
-     * @param   string
-     * @return  bool
-     */
-    public function isMaxLoginAttemptsExceeded($login)
-    {
-        if ($this->ci->config->item('login_count_attempts', 'xp_config')) {
-            $this->ci->load->model('auth/login_attempts');
-            $currentLoginAttempts = $this->ci->login_attempts->get_attempts_num($this->ci->input->ip_address(), $login);
-            return $currentLoginAttempts >= $this->ci->config->item('login_max_attempts', 'tank_auth');
-        }
-        return false;
-    }
-
-    /**
-     * Increase number of attempts for given IP-address and login
-     * (if attempts to login is being counted)
-     *
-     * @param   string
-     * @return  void
-     */
-    private function increaseLoginAttempt($login)
-    {
-        if ($this->ci->config->item('login_count_attempts', 'xp_config')) {
-            if (!$this->isMaxLoginAttemptsExceeded($login)) {
-                $this->ci->load->model('auth/login_attempts');
-                $this->ci->login_attempts->increase_attempt($this->ci->input->ip_address(), $login);
-            }
-        }
-    }
-
-    /**
-     * Clear all attempt records for given IP-address and login
-     * (if attempts to login is being counted)
-     *
-     * @param   string
-     * @return  void
-     */
-    private function clearLoginAttempts($login)
-    {
-        if ($this->ci->config->item('login_count_attempts', 'xp_config')) {
-            $this->ci->load->model('auth/login_attempts');
-            $this->ci->login_attempts->clear_attempts(
-                $this->ci->input->ip_address(),
-                $login,
-                $this->ci->config->item('login_attempt_expire', 'xp_config')
-            );
-        }
     }
 }

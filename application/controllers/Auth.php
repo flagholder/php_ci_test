@@ -8,7 +8,7 @@ class Auth extends MY_Controller
 
         $this->load->helper('form');
         $this->load->library('form_validation');
-        $this->load->library('tank_auth');
+//        $this->load->library('tank_auth');
         $this->load->library('xp_auth');
         $this->lang->load('auth');
     }

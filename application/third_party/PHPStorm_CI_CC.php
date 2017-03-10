@@ -85,7 +85,8 @@
 	 * @property data_model          $data_model
 	 * @property products_model      $products_model
 	 * @property movie_model         $movie_model
-     * @property Xp_Auth                $auth                  auth controller
+     * @property Xp_Auth             $auth                  auth controller
+     * @property login_attempts      $login_attempts        login attempts model
 	 */
 	class CI_Controller {
 		public function __construct() {
