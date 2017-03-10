@@ -118,14 +118,11 @@ class Xp_auth
     public function login($login, $password, $remember)
     {
         if ((strlen($login) > 0) and (strlen($password) > 0)) {
-            $get_user_func = 'get_user_by_email';
-
-            if (!is_null($user = $this->ci->users->$get_user_func($login))) {
+            if (!is_null($user = $this->ci->users->getUserByEmail($login))) {
                 // Find user by email successfully
                 // Check password hash
                 if (password_verify($password, $user->password)) {
                     // password ok
-                    log_debug('[login][users] '.$user->status);
                     if ($user->status == intval(DEF::USER_STATUS_BANNED)) {
                         $this->error = array('banned' => 'Sorry, this account was banned.');
                     } else {
@@ -136,10 +133,11 @@ class Xp_auth
                             'status' => $user->status,
                         ));
 
-                        if ($this->ci->config->item('email_activation', 'xp_config')  and
-                            $user->status == intval(DEF::USER_STATUS_NOT_ACTIVATED)) {
+                        if ($this->ci->config->item('email_activation', 'xp_config') and
+                            $user->status == intval(DEF::USER_STATUS_NOT_ACTIVATED)
+                        ) {
                             // fail - not activated
-                            $this->error = array('not_activated' => '');
+                            $this->error = array('not_activated' => 'auth_email_not_activate');
                         } else {
                             // success
                             if ($remember) {
@@ -248,7 +246,7 @@ class Xp_auth
      */
     public function logout()
     {
-        $this->deleteAutologin();
+        $this->deleteAutoLogin();
         // See http://codeigniter.com/forums/viewreply/662369/ as the reason for the next line
         $this->ci->session->set_userdata(array('user_id' => '', 'username' => '', 'status' => ''));
         $this->ci->session->sess_destroy();
@@ -276,7 +274,7 @@ class Xp_auth
                 'email' => $email,
                 'username' => $username,
                 'password' => $hashed_password,
-                'status' => $email_activation ? 1 : 2,
+                'status' => $email_activation ? DEF::USER_STATUS_NOT_ACTIVATED : DEF::USER_STATUS_ACTIVATED,
                 'last_ip' => $ip,
             );
 
@@ -291,6 +289,21 @@ class Xp_auth
             }
         }
         return null;
+    }
+
+    /**
+     * Clear user's autologin data
+     *
+     * @return  void
+     */
+    private function deleteAutoLogin()
+    {
+        if ($cookie = get_cookie($this->ci->config->item('autologin_cookie_name', 'xp_config'), true)) {
+            $data = unserialize($cookie);
+            $this->ci->load->model('tank_auth/user_autologin');
+            $this->ci->user_autologin->delete($data['user_id'], md5($data['key']));
+            delete_cookie($this->ci->config->item('autologin_cookie_name', 'xp_config'));
+        }
     }
 
     /**
@@ -336,7 +349,7 @@ class Xp_auth
     /**
      * Create reCAPTCHA JS and non-JS HTML to verify user as a human
      *
-     * @return    string
+     * @return  string
      */
     public function createRecaptcha()
     {

@@ -83,7 +83,7 @@ class Users extends CI_Model
      * @param    string
      * @return    object
      */
-    public function get_user_by_email($email)
+    public function getUserByEmail($email)
     {
         $this->db->where('email = ', $email);
         $query = $this->db->get($this->t_users);
