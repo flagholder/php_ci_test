@@ -38,9 +38,9 @@ class DEF
     const DEVICE_REGISTER_STATUS = 'R';
 
     // User status
-    const USER_STATUS_NOT_ACTIVATED  = 0;
-    const USER_STATUS_ACTIVATED      = 1;
-    const USER_STATUS_BANNED         = 2;
+    const USER_STATUS_NOT_ACTIVATED  = '1';
+    const USER_STATUS_ACTIVATED      = '2';
+    const USER_STATUS_BANNED         = '3';
 
 
 }

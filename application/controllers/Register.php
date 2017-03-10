@@ -132,19 +132,18 @@ class Register extends MY_Controller
 
             if (!is_null($data)) {
                 // create user success
-                $data['site_name'] = $this->config->item('website_name', 'tank_auth');
+                $data['site_name'] = $this->config->item('website_name', 'xp_config');
                 if ($email_activation) {
                     // send activation email
-                    $data['activation_period'] = $this->config->item('email_activation_expire', 'tank_auth') / 3600;
-
+                    $data['activation_period'] = $this->config->item('email_activation_expire', 'xp_config') / 3600;
 //                    $this->_send_email('activate', $data['email'], $data);
                     unset($data['password']);
                     // show registration completed
                     redirect('/auth/');
                 } else {
-                    if ($this->config->item('email_account_details', 'tank_auth')) {    // send "welcome" email
-
-//                        $this->_send_email('welcome', $data['email'], $data);
+                    if ($this->config->item('email_account_details', 'xp_config')) {
+                        // send "welcome" email
+                        $this->xp_auth->sendEmail('welcome', $data['email'], $data);
                     }
                     unset($data['password']);
                     // show registration completed
@@ -158,6 +157,7 @@ class Register extends MY_Controller
                 }
             }
         }
+
         if ($captchaRegistration) {
             if ($useRecaptcha) {
                 $data['recaptcha_html'] = $this->xp_auth->createRecaptcha();

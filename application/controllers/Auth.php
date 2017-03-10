@@ -13,14 +13,13 @@ class Auth extends MY_Controller
         $this->lang->load('auth');
     }
 
+    /**
+     * Login user on the site
+     *
+     * @return void
+     */
     public function index()
     {
-//        if ($message = $this->session->flashdata('message')) {
-//            $this->load->view('auth/general_message', array('message' => $message));
-//        } else {
-//            redirect('/auth/login/');
-//        }
-//        redirect('/auth/login/');
         $this->login();
     }
 
@@ -31,71 +30,79 @@ class Auth extends MY_Controller
      */
     public function login()
     {
-        if ($this->tank_auth->is_logged_in()) {                                    // logged in
-            redirect(base_url('home/'));
-
-        } elseif ($this->tank_auth->is_logged_in(false)) {                        // logged in, not activated
+        $loginStatus = $this->xp_auth->isLogin();
+        if ($loginStatus === DEF::USER_STATUS_BANNED) {
+            $this->load->view('errors/error_message');
+            return;
+        } elseif ($loginStatus === DEF::USER_STATUS_NOT_ACTIVATED) {
             redirect(base_url('auth/send_again/'));
-
+        } elseif ($loginStatus === DEF::USER_STATUS_ACTIVATED) {
+            redirect(base_url('home/'));
         } else {
-            $data['login_by_username'] = ($this->config->item('login_by_username', 'tank_auth') AND
-                $this->config->item('use_username', 'tank_auth'));
-            $data['login_by_email'] = $this->config->item('login_by_email', 'tank_auth');
-
             $this->form_validation->set_rules('login', 'Login', 'trim|required|strtolower');
-            $this->form_validation->set_rules('password', 'Password', 'trim|required');
+            $this->form_validation->set_rules('password', 'Password', 'trim|required|alpha_dash');
             $this->form_validation->set_rules('remember', 'Remember me', 'integer');
 
             // Get login for counting attempts to login
-            if ($this->config->item('login_count_attempts', 'tank_auth') AND
-                ($login = $this->input->post('login'))
-            ) {
+            $login = $this->input->post('login');
+            if ($this->config->item('login_count_attempts', 'xp_config') and $login) {
                 $login = $this->security->xss_clean($login);
             } else {
                 $login = '';
             }
 
-            $data['use_recaptcha'] = $this->config->item('use_recaptcha', 'tank_auth');
-            if ($this->tank_auth->is_max_login_attempts_exceeded($login)) {
-                if ($data['use_recaptcha'])
-                    $this->form_validation->set_rules('recaptcha_response_field', 'Confirmation Code', 'trim|required|callback__check_recaptcha');
-                else
-                    $this->form_validation->set_rules('captcha', 'Confirmation Code', 'trim|required|callback__check_captcha');
+            $data['use_recaptcha'] = $this->config->item('use_recaptcha', 'xp_config');
+            if ($this->xp_auth->isMaxLoginAttemptsExceeded($login)) {
+                if ($data['use_recaptcha']) {
+                    $this->form_validation->set_rules(
+                        'recaptcha_response_field',
+                        'Confirmation Code',
+                        'trim|required|callback__check_recaptcha'
+                    );
+                } else {
+                    $this->form_validation->set_rules(
+                        'captcha',
+                        'Confirmation Code',
+                        'trim|required|callback__check_captcha'
+                    );
+                }
             }
-            $data['errors'] = array();
 
-            if ($this->form_validation->run()) {                                // validation ok
-                if ($this->tank_auth->login(
+            $data['errors'] = array();
+            if ($this->form_validation->run()) {
+                // validation ok
+                if ($this->xp_auth->login(
                     $this->form_validation->set_value('login'),
                     $this->form_validation->set_value('password'),
-                    $this->form_validation->set_value('remember'),
-                    $data['login_by_username'],
-                    $data['login_by_email']
+                    $this->form_validation->set_value('remember')
                 )
-                ) {                                // success
+                ) {
+                    // login success
                     redirect(base_url('home/'));
-
                 } else {
-                    $errors = $this->tank_auth->get_error_message();
-                    if (isset($errors['banned'])) {                                // banned user
+                    $errors = $this->xp_auth->getErrorMessage();
+                    if (isset($errors['banned'])) {
+                        // banned user
                         $data['errors'] = $this->lang->line('auth_message_banned') . ' ' . $errors['banned'];
                         $this->load->view('errors/error_message', $data);
-
-                    } elseif (isset($errors['not_activated'])) {                // not activated user
-                        redirect('/auth/send_again/');
-
-                    } else {                                                    // fail
-                        foreach ($errors as $k => $v) $data['errors'][$k] = $this->lang->line($v);
+                    } elseif (isset($errors['not_activated'])) {
+                        // not activated user
+                        redirect(base_url('auth/send_again/'));
+                    } else {
+                        // fail
+                        foreach ($errors as $k => $v) {
+                            $data['errors'][$k] = $this->lang->line($v);
+                        }
                     }
                 }
             }
-            $data['show_captcha'] = FALSE;
-            if ($this->tank_auth->is_max_login_attempts_exceeded($login)) {
-                $data['show_captcha'] = TRUE;
+            $data['show_captcha'] = false;
+            if ($this->xp_auth->isMaxLoginAttemptsExceeded($login)) {
+                $data['show_captcha'] = true;
                 if ($data['use_recaptcha']) {
-                    $data['recaptcha_html'] = $this->_create_recaptcha();
+                    $data['recaptcha_html'] = $this->xp_auth->createRecaptcha();
                 } else {
-                    $data['captcha_html'] = $this->_create_captcha();
+                    $data['captcha_html'] = $this->xp_auth->createCaptcha();
                 }
             }
             $this->load->view('auth/login', $data);
@@ -107,9 +114,9 @@ class Auth extends MY_Controller
      *
      * @return void
      */
-    function logout()
+    public function logout()
     {
-        $this->tank_auth->logout();
+        $this->xp_auth->logout();
         redirect(base_url('home/'));
     }
 
