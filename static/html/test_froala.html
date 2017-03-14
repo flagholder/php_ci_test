@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+
+    <!-- Include external CSS. -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet"
+          type="text/css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.3.0/codemirror.min.css">
+
+    <!-- Include Editor style. -->
+    <link href="../css/froala/froala_editor.pkgd.min.css" rel="stylesheet" type="text/css"/>
+    <link href="../css/froala/froala_style.min.css" rel="stylesheet" type="text/css"/>
+</head>
+
+<body>
+<!-- Create a tag that we will use as the editable area. -->
+<!-- You can use a div tag as well. -->
+
+
+<div class="fr-view">
+    <form action="save" method="post">
+        Here comes the HTML edited with the Froala rich text editor.
+
+        <textarea class="editor"></textarea>
+
+        <p class="editor" id="p1">test</p>
+        <button type="submit">Submit</button>
+    </form>
+</div>
+
+<!-- Include external JS libs. -->
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.3.0/codemirror.min.js"></script>
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.3.0/mode/xml/xml.min.js"></script>
+
+<!-- Include Editor JS files. -->
+<script type="text/javascript" src="../js/vendor/froala/froala_editor.pkgd.min.js"></script>
+
+<!-- Initialize the editor. -->
+<script> $(function () {
+//    $('.editor').froalaEditor({initOnClick: true});
+    $('#p1').froalaEditor({
+        toolbarInline: true,
+        charCounterCount: false,
+        toolbarButtons: ['bold', 'italic', 'underline', 'strikeThrough', 'color', 'emoticons', '-', 'paragraphFormat', 'align', 'formatOL', 'formatUL', 'indent', 'outdent', '-', 'insertImage', 'insertLink', 'insertFile', 'insertVideo', 'undo', 'redo']
+    });
+//    $('#p1').on('froalaEditor.blur', function (e, editor) {
+//        editor.toolbar.hide();
+//    });
+//    $('#p1').on('froalaEditor.focus', function (e, editor) {
+//        editor.toolbarInline=false;
+//        editor.toolbar.show();
+//    });
+}); </script>
+</body>
+</html>
