@@ -191,7 +191,9 @@
 <script>
     $(function () {
 //    $('.editor').froalaEditor({initOnClick: true});
-        $('#content').froalaEditor({});
+        $('#content').froalaEditor({
+            imageUploadURL: 'http://localhost:1123/php-ci-test/upload/upload'
+        });
     });
 </script>
 
