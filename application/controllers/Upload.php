@@ -84,7 +84,7 @@ class Upload extends MY_Controller
             $data = $this->upload->data();
 
             $img = new Imagick($data['full_path']);
-            $img->thumbnailImage(200,0);
+            $img->thumbnailImage(200, 0);
             $thumbImgPath = FCPATH . $this->config->item('upload_file_thumb_path', 'xp_config') . $data['file_name'];
             $img->writeImage($thumbImgPath);
 
