@@ -132,5 +132,17 @@ $config['recaptcha_private_key'] = '';
 $config['db_table_prefix'] = 'xp_';
 
 
+
+/*
+|--------------------------------------------------------------------------
+| File upload settings
+|
+|--------------------------------------------------------------------------
+*/
+$config['local_file_base_path'] = 'c:/web_workspace/';
+$config['upload_file_path'] = 'uploads/';
+$config['upload_file_thumb_path'] = 'uploads/thumb/';
+
+
 /* End of file xp_config.php */
 /* Location: ./application/config/xp_config.php */
