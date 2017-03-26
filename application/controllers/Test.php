@@ -23,4 +23,9 @@ class Test extends CI_Controller
         $this->user_test->count_users();
         $this->load->view('welcome_message');
     }
+
+    public function viewProfile()
+    {
+        $this->load->view('auth/profile');
+    }
 }
