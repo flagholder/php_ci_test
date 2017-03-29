@@ -95,7 +95,7 @@ class Upload extends MY_Controller
             $info->type = $data['file_type'];
             $info->url = $uploadFileUrl . $data['file_name'];
             // I set this to original file since I did not create thumbs.  change to thumbnail directory if you do = $upload_path_url .'/thumbs' .$data['file_name']
-            $info->thumbnailUrl = $uploadFileUrl . 'thumbs/' . $data['file_name'];
+            $info->thumbnailUrl = $uploadFileUrl . 'thumb/' . $data['file_name'];
             $info->deleteUrl = base_url() . 'upload/deleteImage/' . $data['file_name'];
             $info->deleteType = 'DELETE';
             $info->error = null;

@@ -89,10 +89,10 @@
         <!-- left column -->
         <div class="col-md-3">
             <div class="text-center">
-                <img src="//placehold.it/150" class="avatar img-circle img-thumbnail" alt="avatar">
+                <img src="//placehold.it/150" id="previewHolder" class="avatar img-circle" alt="avatar" width="150px" height="150px">
                 <h6>Upload a photo</h6>
 
-                <input type="file" class="well well-sm">
+                <input type="file" name="filePhoto" value="" id="filePhoto" class="text-center center-block well well-sm">
             </div>
         </div>
 
@@ -218,6 +218,22 @@
     });
     $('#tags').tagsinput({
         maxChars: 20
+    });
+
+
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                $('#previewHolder').attr('src', e.target.result);
+            }
+
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    $("#filePhoto").change(function() {
+        readURL(this);
     });
 
 
