@@ -54,11 +54,18 @@ class Xp_auth
                 if (isset($data['key']) and isset($data['user_id'])) {
                     $this->ci->load->model('auth/user_autologin');
                     if (!is_null($user = $this->ci->user_autologin->get($data['user_id'], md5($data['key'])))) {
+                        log_info(
+                            sprintf(
+                                '[xp_auth][autologin] user_id=%s, key=%s',
+                                $data['user_id'],
+                                $data['key']
+                            )
+                        );
                         // Login user
                         $this->ci->session->set_userdata(array(
                             'user_id' => $user->id,
                             'username' => $user->username,
-                            'status' => $user->status,
+                            'status' => $data['status'],
                         ));
 
                         // Renew users cookie to prevent it from expiring
@@ -141,7 +148,7 @@ class Xp_auth
                         } else {
                             // success
                             if ($remember) {
-                                $this->createAutoLogin($user->id);
+                                $this->createAutoLogin($user);
                             }
                             $this->clearLoginAttempts($login);
                             $this->ci->users->updateLoginInfo($user->id);
@@ -169,17 +176,17 @@ class Xp_auth
      * @param   int
      * @return  bool
      */
-    private function createAutoLogin($user_id)
+    private function createAutoLogin($user)
     {
         $key = substr(md5(uniqid(rand() . get_cookie($this->ci->config->item('sess_cookie_name')))), 0, 16);
 
         $this->ci->load->model('auth/user_autologin');
-        $this->ci->user_autologin->purge($user_id);
+        $this->ci->user_autologin->purge($user->id);
 
-        if ($this->ci->user_autologin->set($user_id, md5($key))) {
+        if ($this->ci->user_autologin->set($user->id, md5($key))) {
             set_cookie(array(
                 'name' => $this->ci->config->item('autologin_cookie_name', 'xp_config'),
-                'value' => serialize(array('user_id' => $user_id, 'key' => $key)),
+                'value' => serialize(array('user_id' => $user->id, 'key' => $key, 'status' => $user->status)),
                 'expire' => $this->ci->config->item('autologin_cookie_life', 'xp_config'),
             ));
             return true;

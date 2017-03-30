@@ -357,36 +357,6 @@ class Auth extends MY_Controller
         }
     }
 
-    /**
-     * Delete user from the site (only when user is logged in)
-     *
-     * @return void
-     */
-    function unregister()
-    {
-        if (!$this->tank_auth->is_logged_in()) {                                // not logged in or not activated
-            redirect('/auth/login/');
-
-        } else {
-            $this->form_validation->set_rules('password', 'Password', 'trim|required');
-
-            $data['errors'] = array();
-
-            if ($this->form_validation->run()) {                                // validation ok
-                if ($this->tank_auth->delete_user(
-                    $this->form_validation->set_value('password'))
-                ) {        // success
-                    $this->_show_message($this->lang->line('auth_message_unregistered'));
-
-                } else {                                                        // fail
-                    $errors = $this->tank_auth->get_error_message();
-                    foreach ($errors as $k => $v) $data['errors'][$k] = $this->lang->line($v);
-                }
-            }
-            $this->load->view('auth/unregister_form', $data);
-        }
-    }
-
 
     /**
      * Send email message of given type (activate, forgot_password, etc.)
@@ -508,6 +478,7 @@ class Auth extends MY_Controller
 
 
     /*---------------- Useless method -------------------*/
+    /*---------------------------------------------------*/
 
     /**
      * Show info message

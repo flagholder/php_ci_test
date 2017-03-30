@@ -1,10 +1,9 @@
 <?php $this->load->view('public/header'); ?>
 
-<!-- login form -->
 <div class="container">
     <div class="page-header">
         <h1>
-            <span class="fa fa-buysellads fa-fw" aria-hidden="true"></span>&nbsp;Some Error Happened!
+            <span class="fa fa-buysellads fa-fw" aria-hidden="true"></span>&nbsp;Some Errors Happened!
         </h1>
     </div>
 
