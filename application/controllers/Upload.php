@@ -108,6 +108,5 @@ class Upload extends MY_Controller
                 echo json_encode(array("files" => $files));
             }
         }
-
     }
 }

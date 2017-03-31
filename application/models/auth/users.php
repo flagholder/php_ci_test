@@ -29,13 +29,11 @@ class Users extends CI_Model
      * Get user record by Id
      *
      * @param    int
-     * @param    bool
-     * @return    object
+     * @return   object
      */
-    public function get_user_by_id($user_id, $activated)
+    public function getUserById($user_id)
     {
         $this->db->where('id', $user_id);
-        $this->db->where('activated', $activated ? 1 : 0);
 
         $query = $this->db->get($this->t_users);
         if ($query->num_rows() == 1) {
@@ -68,7 +66,7 @@ class Users extends CI_Model
      * @param    string
      * @return    object
      */
-    public function get_user_by_username($username)
+    public function getUserByUsername($username)
     {
         $this->db->where('username = ', strtolower($username));
 
@@ -139,7 +137,9 @@ class Users extends CI_Model
 
         if ($this->db->insert($this->t_users, $data)) {
             $user_id = $this->db->insert_id();
+//          TODO: modify below
             $activated = false;
+
             if ($activated) {
                 $this->create_profile($user_id);
             }
@@ -157,9 +157,9 @@ class Users extends CI_Model
      * @param    bool
      * @return    bool
      */
-    function activate_user($user_id, $activation_key, $activate_by_email)
+    public function activate_user($user_id, $activation_key, $activate_by_email)
     {
-        $this->db->select('1', FALSE);
+        $this->db->select('1', false);
         $this->db->where('id', $user_id);
         if ($activate_by_email) {
             $this->db->where('new_email_key', $activation_key);
@@ -169,17 +169,16 @@ class Users extends CI_Model
         $this->db->where('activated', 0);
         $query = $this->db->get($this->t_users);
 
-        if ($query->num_rows() == 1) {
-
+        if (1 == $query->num_rows()) {
             $this->db->set('activated', 1);
-            $this->db->set('new_email_key', NULL);
+            $this->db->set('new_email_key', null);
             $this->db->where('id', $user_id);
             $this->db->update($this->t_users);
 
             $this->createProfile($user_id);
-            return TRUE;
+            return true;
         }
-        return FALSE;
+        return false;
     }
 
 
