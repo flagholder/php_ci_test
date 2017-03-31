@@ -9,17 +9,17 @@
 
     <div class="row">
         <!-- left column -->
-        <div class="col-md-3">
+        <div class="col-md-3 col-sm-6 col-xs-12">
             <div class="text-center">
-                <img src="//placehold.it/150" class="avatar img-circle" alt="avatar">
-                <h6>Upload a different photo...</h6>
+                <img src="//placehold.it/150" id="avatar" class="avatar img-circle img-thumbnail" alt="avatar">
+                <h5>Upload a photo</h5>
 
-                <input type="file" class="form-control">
+                <input type="file" name="file" id="file_avatar" class="center-block text-center well well-sm">
             </div>
         </div>
 
         <!-- edit form column -->
-        <div class="col-md-9 personal-info">
+        <div class="col-md-9 col-sm-6 col-xs-12 personal-info">
             <div class="alert alert-info alert-dismissable">
                 <a class="panel-close close" data-dismiss="alert">×</a>
                 <i class="fa fa-coffee"></i>
