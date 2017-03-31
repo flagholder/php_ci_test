@@ -52,8 +52,8 @@ class Users extends CI_Model
      */
     public function get_user_by_login($login)
     {
-        $this->db->where('LOWER(username)=', strtolower($login));
-        $this->db->or_where('LOWER(email)=', strtolower($login));
+        $this->db->where('username = ', strtolower($login));
+        $this->db->or_where('email = ', strtolower($login));
 
         $query = $this->db->get($this->t_users);
         if ($query->num_rows() == 1) {
@@ -70,10 +70,12 @@ class Users extends CI_Model
      */
     public function get_user_by_username($username)
     {
-        $this->db->where('LOWER(username)=', strtolower($username));
+        $this->db->where('username = ', strtolower($username));
 
         $query = $this->db->get($this->t_users);
-        if ($query->num_rows() == 1) return $query->row();
+        if ($query->num_rows() == 1) {
+            return $query->row();
+        }
         return null;
     }
 
@@ -101,8 +103,8 @@ class Users extends CI_Model
      */
     function is_username_available($username)
     {
-        $this->db->select('1', FALSE);
-        $this->db->where('LOWER(username)=', strtolower($username));
+        $this->db->select('1', false);
+        $this->db->where('username = ', strtolower($username));
 
         $query = $this->db->get($this->t_users);
         return $query->num_rows() == 0;
@@ -118,7 +120,6 @@ class Users extends CI_Model
     {
         $this->db->select('1', false);
         $this->db->where('email = ', $email);
-//		$this->db->or_where('LOWER(new_email)=', strtolower($email));
 
         $query = $this->db->get($this->t_users);
         return $query->num_rows() == 0;
@@ -210,7 +211,7 @@ class Users extends CI_Model
      */
     function can_reset_password($user_id, $new_pass_key, $expire_period = 900)
     {
-        $this->db->select('1', FALSE);
+        $this->db->select('1', false);
         $this->db->where('id', $user_id);
         $this->db->where('new_password_key', $new_pass_key);
         $this->db->where('UNIX_TIMESTAMP(new_password_requested) >', time() - $expire_period);
