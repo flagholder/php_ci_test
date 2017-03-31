@@ -307,7 +307,7 @@ class Xp_auth
     {
         if ($cookie = get_cookie($this->ci->config->item('autologin_cookie_name', 'xp_config'), true)) {
             $data = unserialize($cookie);
-            $this->ci->load->model('tank_auth/user_autologin');
+            $this->ci->load->model('auth/user_autologin');
             $this->ci->user_autologin->delete($data['user_id'], md5($data['key']));
             delete_cookie($this->ci->config->item('autologin_cookie_name', 'xp_config'));
         }
@@ -381,27 +381,14 @@ class Xp_auth
      */
     public function sendEmail($type, $email, &$data)
     {
-        $this->ci->load->library('email');
-        $this->ci->email->from(
-            $this->ci->config->item('webmaster_email', 'xp_config'),
-            $this->ci->config->item('website_name', 'xp_config')
-        );
+        $this->ci->load->library('utility');
 
-        $this->ci->email->reply_to(
-            $this->ci->config->item('webmaster_email', 'xp_config'),
-            $this->ci->config->item('website_name', 'xp_config')
+        $subject = sprintf( $this->ci->lang->line('auth_subject_' . $type),
+                            $this->ci->config->item('website_name', 'xp_config')
         );
-        $this->ci->email->to($email);
-        $this->ci->email->subject(
-            sprintf(
-                $this->ci->lang->line('auth_subject_' . $type),
-                $this->ci->config->item('website_name', 'xp_config')
-            )
-        );
-        $this->ci->email->message($this->ci->load->view('email/' . $type . '-html', $data, true));
-        $this->ci->email->set_alt_message($this->ci->load->view('email/' . $type . '-txt', $data, true));
-        // TODO: unmark line below to send email
-//        $this->ci->email->send();
+        $msg = $this->ci->load->view('email/' . $type . '-html', $data, true);
+        $altMsg = $this->ci->load->view('email/' . $type . '-txt', $data, true);
+        $this->ci->utility->sendEmail($email, $subject, $msg, $altMsg);
         log_debug('[auth][send_email] ' . $type . ' ' . $email);
     }
 }

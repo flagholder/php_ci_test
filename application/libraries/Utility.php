@@ -2,11 +2,11 @@
 
 class Utility
 {
-    private $CI;
+    private $ci;
 
     public function __construct()
     {
-        $this->CI =& get_instance();
+        $this->ci =& get_instance();
     }
 
 
@@ -47,7 +47,7 @@ class Utility
      *
      * @return bool true/false
      */
-    public function is_https($url)
+    public function isHttps($url)
     {
         if ($url && trim($url)) {
             return (strtolower(parse_url($url, PHP_URL_SCHEME))) == 'https' ? true : false;
@@ -83,7 +83,7 @@ class Utility
      * 取域名
      *
      */
-    public function get_domain($url)
+    public function getDomain($url)
     {
         $search = '~^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?~i';
 
@@ -96,9 +96,43 @@ class Utility
      *
      * 生成唯一随机数
      */
-    public function gen_uniqid_no()
+    public function genUniqueId()
     {
         return md5(date('Ymd') . substr(implode(NULL, array_map('ord', str_split(substr(uniqid(), 7, 13), 1))), 0, 8));
+    }
+
+
+    /**
+     * Send email
+     */
+
+    /**
+     * Send email message of given type (activate, forgot_password, etc.)
+     *
+     * @param    string
+     * @param    string
+     * @param    array
+     * @return    void
+     */
+    public function sendEmail($email, $subject, $msg, $altMsg)
+    {
+        $this->ci->load->library('email');
+        $this->ci->email->from(
+            $this->ci->config->item('webmaster_email', 'xp_config'),
+            $this->ci->config->item('website_name', 'xp_config')
+        );
+
+        $this->ci->email->reply_to(
+            $this->ci->config->item('webmaster_email', 'xp_config'),
+            $this->ci->config->item('website_name', 'xp_config')
+        );
+        $this->ci->email->to($email);
+        $this->ci->email->subject($subject);
+        $this->ci->email->message($msg);
+        $this->ci->email->set_alt_message($altMsg);
+        // TODO: unmark line below to send email
+//        $this->ci->email->send();
+        log_debug('[utility][send_email] ' . $email . ' ' . $subject);
     }
 
 }

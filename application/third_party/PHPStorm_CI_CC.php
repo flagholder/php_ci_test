@@ -78,6 +78,7 @@
 	 * @property Layout              $layout               Layout Class
      * @property Tank_auth           $tank_auth            tank auth lib
      * @property Xp_auth             $xp_auth              x-projects auth lib
+     * @property Utility             $utility              x-projects utility lib
      * @property Error               $error                Error Class
 	 ***************** YOUR MODELS *****************
 	 * @property users               $users                tank auth user model
