@@ -24,6 +24,11 @@
 class Xp_auth
 {
     private $error = array();
+    private $userInfo = array (
+        'id' => null,
+        'email' => null,
+        'username' => null
+    );
 
     public function __construct()
     {
@@ -65,8 +70,12 @@ class Xp_auth
                         $this->ci->session->set_userdata(array(
                             'user_id' => $user->id,
                             'username' => $user->username,
+                            'email' => $user->username,
                             'status' => $data['status'],
                         ));
+
+                        $this->userInfo['id'] = $user->id;
+                        $this->userInfo['username'] = $user->username;
 
                         // Renew users cookie to prevent it from expiring
                         set_cookie(array(
@@ -109,9 +118,24 @@ class Xp_auth
         $loginStatus = $this->ci->session->userdata('status');
         if (!$loginStatus) {
             return 0;
+        } else {
+            $this->userInfo['id'] = $this->ci->session->userdata('user_id');
+            $this->userInfo['username'] = $this->ci->session->userdata('username');
         }
         return $loginStatus;
     }
+
+
+    /**
+     * Return user account info after login.
+     *
+     * @return   array
+     */
+    public function getUserInfo()
+    {
+        return $this->userInfo;
+    }
+
 
     /**
      * Login user on the site. Return TRUE if login is successful
@@ -139,6 +163,9 @@ class Xp_auth
                             'email' => $user->email,
                             'status' => $user->status,
                         ));
+
+                        $this->userInfo['id'] = $user->id;
+                        $this->userInfo['username'] = $user->username;
 
                         if ($this->ci->config->item('email_activation', 'xp_config') and
                             $user->status == intval(DEF::USER_STATUS_NOT_ACTIVATED)
@@ -255,7 +282,7 @@ class Xp_auth
     {
         $this->deleteAutoLogin();
         // See http://codeigniter.com/forums/viewreply/662369/ as the reason for the next line
-        $this->ci->session->set_userdata(array('user_id' => '', 'username' => '', 'status' => ''));
+        $this->ci->session->set_userdata(array('user_id' => '', 'username' => '', 'email' => '', 'status' => ''));
         $this->ci->session->sess_destroy();
     }
 

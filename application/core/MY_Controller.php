@@ -25,8 +25,8 @@
 class MY_Controller extends CI_Controller
 {
     private $_isXA = false;
-    protected $uuid = NULL;
-    protected $loginname = NULL;
+    protected $uuid = null;
+    protected $loginname = null;
     protected $isLogin = false;
 
     public function __construct($checkLogin = false)
