@@ -19,7 +19,7 @@
 
     <link rel="stylesheet" href="/php-ci-test/static/css/font-awesome.min.css">
 
-    <link href="/php-ci-test/static/css/datedropper.css" rel="stylesheet" type="text/css" />
+    <link href="/php-ci-test/static/css/bootstrap-datepicker3.min.css" rel="stylesheet" type="text/css" />
     <link href="/php-ci-test/static/css/bootstrap-tagsinput.css" rel="stylesheet" type="text/css" />
 
     <!-- Custom styles for this template -->
@@ -109,16 +109,17 @@
                 <div class="form-group">
                     <label class="col-lg-3 control-label">School</label>
                     <div class="col-lg-8">
-                        <input class="form-control" type="text" value="" placeholder="Input your school">
+                        <input class="form-control" type="text" name="school"  id="school" value="" placeholder="Input your school" data-provide="typeahead">
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label class="col-lg-3 control-label">Birthday</label>
-                    <div class="col-lg-8" class="form-group">
-                        <select id="dobmonth"></select>
-                        <select id="dobday"></select>
-                        <select id="dobyear"></select>
+                    <div class="col-lg-4">
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="birthday" name="birthday" data-date-end-date="2016-12-31">
+                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                        </div>
                     </div>
                 </div>
 
@@ -184,33 +185,14 @@
 
 <script src="/php-ci-test/static/js/vendor/bootstrap.min.js"></script>
 
-<script src="/php-ci-test/static/js/vendor/dobPicker.min.js"></script>
-<script src="/php-ci-test/static/js/vendor/jquery-birthday-picker.min.js"></script>
-<script src="/php-ci-test/static/js/vendor/datedropper.min.js"></script>
-
+<script src="/php-ci-test/static/js/vendor/bootstrap3-typeahead.min.js"></script>
+<script src="/php-ci-test/static/js/vendor/bootstrap-datepicker.min.js"></script>
 <script src="/php-ci-test/static/js/vendor/bootstrap-tagsinput.js"></script>
 
 <script src="/php-ci-test/static/js/plugins.js"></script>
 <!--<script src="/php-ci-test/static/js/main.js"></script>-->
 <script>
     $(document).ready(function(){
-        $.dobPicker({
-            // Selectopr IDs
-            daySelector: '#dobday',
-            monthSelector: '#dobmonth',
-            yearSelector: '#dobyear',
-
-            // Default option values
-            dayDefault: 'Day',
-            monthDefault: 'Month',
-            yearDefault: 'Year',
-
-            // Minimum age
-            minimumAge: 2,
-
-            // Maximum age
-            maximumAge: 100
-        });
 
     });
     $('#tags').tagsinput({
@@ -220,6 +202,20 @@
         maxChars: 20
     });
 
+
+    $('#birthday').datepicker({
+        format: "yyyy-mm-dd",
+        startView: 2,
+        maxViewMode: 3
+    });
+
+    $("#school").typeahead({
+        source: function (query, process) {
+            return $.get('http://www.greatschools.org/gsr/search/suggest/school?query=' + query, function (data) {
+                return data[0]["school_name"];
+            });
+        }
+    });
 
     function readURL(input) {
         if (input.files && input.files[0]) {
