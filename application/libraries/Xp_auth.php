@@ -340,6 +340,59 @@ class Xp_auth
         }
     }
 
+
+    /**
+     * Create new user profile:
+     *
+     * @param   int
+     * @return  bool
+     */
+    public function createUserProfile($userId)
+    {
+
+        // TODO: check if profile was created or not
+        $data = array(
+            'id' => $userId
+        );
+
+
+        if (! $this->ci->users->createUserProfile($data)) {
+            return false;
+        }
+        return true;
+    }
+
+
+    /**
+     * Update user profile:
+     *
+     * @param   string
+     * @param   string
+     * @param   string
+     * @param   string
+     * @param   bool
+     * @return  bool
+     */
+    public function updateUserProfile($userId, $avatar, $school, $grade, $birthday, $tags)
+    {
+
+        // TODO: check if profile was created or not
+        $data = array(
+            'id' => $userId,
+            'avatar' => $avatar,
+            'school' => $school,
+            'grade' => $grade,
+            'birthday' => $birthday,
+            'tags' => $tags
+        );
+
+
+        if (!is_null($res = $this->ci->users->updateUserProfile($data))) {
+
+        }
+        return true;
+    }
+
     /**
      * Get error message.
      * Can be invoked after any failed operation such as login or register.

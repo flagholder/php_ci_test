@@ -136,14 +136,15 @@ class Users extends CI_Model
 //		$data['status'] = $activated ? 2 : 1;
 
         if ($this->db->insert($this->t_users, $data)) {
-            $user_id = $this->db->insert_id();
+            $userId = $this->db->insert_id();
+
 //          TODO: modify below
-            $activated = false;
+            $activated = true;
 
             if ($activated) {
-                $this->create_profile($user_id);
+                $this->createUserProfile($userId);
             }
-            return array('user_id' => $user_id);
+            return array('user_id' => $userId);
         }
         return null;
     }
@@ -175,7 +176,7 @@ class Users extends CI_Model
             $this->db->where('id', $user_id);
             $this->db->update($this->t_users);
 
-            $this->createProfile($user_id);
+//            $this->createProfile($user_id);
             return true;
         }
         return false;
@@ -354,15 +355,32 @@ class Users extends CI_Model
      * Create an empty profile for a new user
      *
      * @param    int
-     * @return    bool
+     * @return   bool
      */
-    private function createProfile($user_id)
+    public function createUserProfile($userId)
     {
-        $this->db->set('user_id', $user_id);
-        return $this->db->insert($this->t_user_profiles);
+
+        return $this->db->insert($this->t_user_profiles, array('user_id' => $userId));
     }
 
 
+    /**
+     * Update user profile
+     *
+     * @param    array
+     * @return    bool
+     */
+    public function updateUserProfile($userId, $userProfileData)
+    {
+
+        $this->db->set('', $this->input->ip_address());
+        $this->db->set('last_login', date('Y-m-d H:i:s'));
+        $this->db->where('id', $userId);
+        $this->db->update($this->t_user_profiles);
+
+//        return $this->db->insert($this->t_user_profiles, $userProfileData);
+        return true;
+    }
 }
 
 /* End of file users.php */

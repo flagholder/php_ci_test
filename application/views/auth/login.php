@@ -15,9 +15,11 @@
                 <?php echo validation_errors(); ?>
             </div>
 
+            <div class="clearfix form-group">&nbsp;</div>
+
             <div class="form-group">
                 <label for="yourName" class="control-label col-sm-3">Email</label>
-                <div class="col-sm-9">
+                <div class="col-sm-6">
                     <div class="input-group">
                         <span class="input-group-addon"><i class="fa fa-user fa-fw" aria-hidden="true"></i></span>
                         <input type="text" class="form-control" id="login" name="login" placeholder="Your register email" maxlength="50">
@@ -37,7 +39,7 @@
 
             <div class="form-group">
                 <label for="password" class="control-label col-sm-3">Password</label>
-                <div class="col-sm-9">
+                <div class="col-sm-6">
                     <div class="input-group">
                         <span class="input-group-addon"><i class="fa fa-lock fa-fw" aria-hidden="true"></i></span>
                         <input type="password" class="form-control" id="password" name="password" placeholder="Your password" maxlength="50">
