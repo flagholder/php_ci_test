@@ -19,6 +19,9 @@
 
     <link rel="stylesheet" href="/php-ci-test/static/css/font-awesome.min.css">
 
+    <link href="/php-ci-test/static/css/bootstrap-datepicker3.min.css" rel="stylesheet" type="text/css" />
+    <link href="/php-ci-test/static/css/bootstrap-tagsinput.css" rel="stylesheet" type="text/css" />
+
     <!-- Custom styles for this template -->
 <!--    <link href="https://getbootstrap.com/examples/navbar-fixed-top/navbar-fixed-top.css" rel="stylesheet">-->
     <link href="/php-ci-test/static/css/main.css" rel="stylesheet">
@@ -67,7 +70,20 @@
             <ul class="nav navbar-nav navbar-right">
                 <li><a href="../navbar-static-top/">Static top</a></li>
                 <li class="active"><a href="./">Fixed top <span class="sr-only">(current)</span></a></li>
-                <li><a href="http://localhost:1123/php-ci-test/auth/"><span class="fa fa-sign-in fa-fw"></span>&nbsp;Sign In</a></li>
+                <?php if (isset($username) && $username) {?>
+                    <li>
+                        <a href="http://localhost:1123/php-ci-test/user/showprofile">
+                            <span class="fa fa-user fa-fw"></span>&nbsp;<?php echo $username; ?>
+                        </a>
+                    </li>
+                <?php } else { ?>
+                    <li>
+                        <a href="http://localhost:1123/php-ci-test/auth/">
+                            <span class="fa fa-sign-in fa-fw"></span>&nbsp;Sign In
+                        </a>
+                    </li>
+                <?php } ?>
+
             </ul>
         </div><!--/.nav-collapse -->
     </div>

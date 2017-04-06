@@ -363,6 +363,25 @@ class Users extends CI_Model
         return $this->db->insert($this->t_user_profiles, array('user_id' => $userId));
     }
 
+    /**
+     * Get user profile
+     *
+     * @param    int
+     * @return   array
+     */
+    public function getUserProfile($userId)
+    {
+        $this->db->select('*', false);
+        $this->db->where('user_id', $userId);
+        $query = $this->db->get($this->t_user_profiles);
+        if ($query->num_rows() == 0) {
+            return array();
+        }
+
+        $dataResult = $query->result_array();
+        return $dataResult[0];
+    }
+
 
     /**
      * Update user profile
@@ -370,16 +389,33 @@ class Users extends CI_Model
      * @param    array
      * @return    bool
      */
-    public function updateUserProfile($userId, $userProfileData)
+    public function updateUserProfile($userData)
     {
 
-        $this->db->set('', $this->input->ip_address());
-        $this->db->set('last_login', date('Y-m-d H:i:s'));
-        $this->db->where('id', $userId);
+        $this->db->set('school', $userData['school']);
+        $this->db->set('grade', $userData['grade']);
+        $this->db->set('birthday', $userData['birthday']);
+        $this->db->set('tags', $userData['tags']);
+        $this->db->where('user_id', $userData['id']);
         $this->db->update($this->t_user_profiles);
 
-//        return $this->db->insert($this->t_user_profiles, $userProfileData);
-        return true;
+        return $this->db->affected_rows() > 0;
+    }
+
+    /**
+     * Update user avatar
+     *
+     * @param    string
+     * @return   bool
+     */
+    public function updateUserAvatar($userId, $avatarData)
+    {
+
+        $this->db->set('avatar', $avatarData);
+        $this->db->where('user_id', $userId);
+        $this->db->update($this->t_user_profiles);
+
+        return $this->db->affected_rows() > 0;
     }
 }
 

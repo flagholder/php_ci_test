@@ -20,7 +20,7 @@
                     <p>Note: If you're viewing this page via a <code>file://</code> URL, the "next" and "previous"
                         Glyphicon buttons on the left and right might not load/display properly due to web browser
                         security rules.</p>
-                    <p><a class="btn btn-lg btn-primary" href="auth/register/" role="button">Sign up today</a></p>
+                    <p><a class="btn btn-lg btn-primary" href="http://localhost:1123/php-ci-test/register/" role="button">Sign up today</a></p>
                 </div>
             </div>
         </div>
@@ -59,7 +59,8 @@
         <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
         <span class="sr-only">Next</span>
     </a>
-</div><!-- /.carousel -->
+</div>
+<!-- /.carousel -->
 
 
 <!-- Marketing messaging and featurettes
@@ -72,8 +73,8 @@
     <div class="row">
         <div class="col-lg-4">
             <img class="img-circle"
-                 src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw=="
-                 alt="Generic placeholder image" width="140" height="140">
+                 src="//placehold.it/150"
+                 alt="Generic placeholder image" width="150" height="150">
             <h2>Heading</h2>
             <p>Donec sed odio dui. Etiam porta sem malesuada magna mollis euismod. Nullam id dolor id nibh ultricies
                 vehicula ut id elit. Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Praesent commodo
@@ -82,8 +83,8 @@
         </div><!-- /.col-lg-4 -->
         <div class="col-lg-4">
             <img class="img-circle"
-                 src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw=="
-                 alt="Generic placeholder image" width="140" height="140">
+                 src="//placehold.it/150"
+                 alt="Generic placeholder image" width="150" height="150">
             <h2>Heading</h2>
             <p>Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Cras
                 mattis consectetur purus sit amet fermentum. Fusce dapibus, tellus ac cursus commodo, tortor mauris
@@ -92,8 +93,8 @@
         </div><!-- /.col-lg-4 -->
         <div class="col-lg-4">
             <img class="img-circle"
-                 src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw=="
-                 alt="Generic placeholder image" width="140" height="140">
+                 src="//placehold.it/150"
+                 alt="Generic placeholder image" width="150" height="150">
             <h2>Heading</h2>
             <p>Donec sed odio dui. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Vestibulum id ligula
                 porta felis euismod semper. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut
@@ -116,7 +117,7 @@
                 commodo.</p>
         </div>
         <div class="col-md-5">
-            <img class="featurette-image img-responsive center-block" src="static/img/feature_1.jpg"
+            <img class="featurette-image img-responsive center-block" src="//placehold.it/500"
                  alt="Generic placeholder image">
         </div>
     </div>
@@ -132,7 +133,7 @@
                 commodo.</p>
         </div>
         <div class="col-md-5 col-md-pull-7">
-            <img class="featurette-image img-responsive center-block" data-src="holder.js/500x500/auto"
+            <img class="featurette-image img-responsive center-block" src="//placehold.it/500"
                  alt="Generic placeholder image">
         </div>
     </div>
@@ -147,7 +148,7 @@
                 commodo.</p>
         </div>
         <div class="col-md-5">
-            <img class="featurette-image img-responsive center-block" data-src="holder.js/500x500/auto"
+            <img class="featurette-image img-responsive center-block" src="//placehold.it/500"
                  alt="Generic placeholder image">
         </div>
     </div>

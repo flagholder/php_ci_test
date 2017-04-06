@@ -22,6 +22,8 @@ class Home extends MY_Controller
         );
 
         if ($this->xp_auth->isLogin()) {
+            $data = $this->xp_auth->getUserInfo();
+            log_debug('[home][index] user info :' . $data['id']);
             $this->load->view('home/index', $data);
         } else {
             redirect('/auth/login');

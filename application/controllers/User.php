@@ -9,6 +9,8 @@
 class User extends MY_Controller
 {
 
+    private $userInfo = array();
+
     public function __construct()
     {
         parent::__construct();
@@ -19,6 +21,7 @@ class User extends MY_Controller
         $this->lang->load('auth');
 
         $this->checkLogin();
+        $this->userInfo = $this->xp_auth->getUserInfo();
     }
 
     public function index()
@@ -28,14 +31,64 @@ class User extends MY_Controller
 
     public function showProfile()
     {
-        $userInfo = $this->xp_auth->getUserInfo();
-        $this->load->view('auth/profile');
-        print_r($userInfo);
-
+        $userProfile = $this->xp_auth->getUserProfile($this->userInfo['id']);
+        $data = array_merge($this->userInfo, $userProfile);
+        $this->load->view('auth/profile', $data);
     }
 
     public function editProfile()
     {
+        $ip = $this->input->ip_address();
+        $school = $this->input->post('school');
+        $birthday = $this->input->post('birthday');
+        $grade = $this->input->post('grade');
+        $phone = $this->input->post('phone');
+        $tags = $this->input->post('tags');
+
+        log_info(
+            sprintf(
+                '[user][profile_edit] user_id=%s, school=%s, birthday=%s, grade=%s, phone=%s, tags=%s ',
+                $this->userInfo['id'],
+                $school,
+                $birthday,
+                $grade,
+                $phone,
+                $tags
+            )
+        );
+
+        $this->form_validation->set_rules('school', 'School', 'trim');
+        $this->form_validation->set_rules('birthday', 'Birthday', 'trim|alpha_dash');
+        $this->form_validation->set_rules('grade', 'Grade', 'trim|alpha_dash');
+        $this->form_validation->set_rules('phone', 'Phone', 'trim|alpha_dash');
+        $this->form_validation->set_rules('tags', 'Tags', 'trim');
+
+
+        $data['errors'] = array();
+        $validateResult = $this->form_validation->run();
+
+        if ($validateResult) {
+            $updateResult = $this->xp_auth->updateUserProfile(
+                $this->userInfo['id'],
+                $this->form_validation->set_value('school'),
+                $this->form_validation->set_value('grade'),
+                $this->form_validation->set_value('birthday'),
+                $this->form_validation->set_value('tags')
+            );
+            if ($updateResult) {
+                redirect(base_url('home/'));
+            } else {
+                $data['errors'] = 'update profile error!';
+                $this->load->view('errors/error_message', $data);
+            }
+        } else {
+            $this->load->view('auth/showprofile');
+        }
+    }
+
+    public function updateAvatar()
+    {
+
 
     }
 

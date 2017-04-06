@@ -362,35 +362,43 @@ class Xp_auth
         return true;
     }
 
+    /**
+     * Get user profile:
+     *
+     * @param   int
+     * @return  array
+     */
+    public function getUserProfile($userId)
+    {
+
+        $userProfile = $this->ci->users->getUserProfile($userId);
+        return $userProfile;
+    }
+
 
     /**
      * Update user profile:
      *
+     * @param   int
      * @param   string
      * @param   string
      * @param   string
      * @param   string
-     * @param   bool
+     * @param   string
      * @return  bool
      */
-    public function updateUserProfile($userId, $avatar, $school, $grade, $birthday, $tags)
+    public function updateUserProfile($userId, $school, $grade, $birthday, $tags)
     {
 
-        // TODO: check if profile was created or not
         $data = array(
             'id' => $userId,
-            'avatar' => $avatar,
             'school' => $school,
             'grade' => $grade,
             'birthday' => $birthday,
             'tags' => $tags
         );
 
-
-        if (!is_null($res = $this->ci->users->updateUserProfile($data))) {
-
-        }
-        return true;
+        return $this->ci->users->updateUserProfile($data);
     }
 
     /**

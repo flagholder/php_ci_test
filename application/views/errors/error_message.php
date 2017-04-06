@@ -8,7 +8,7 @@
     </div>
 
     <div class="well well-sm">
-        <p><?php echo $data['errors'];?></p>
+        <p><?php echo $errors;?></p>
         <div class="clearfix">&nbsp;</div>
 
     </div>
