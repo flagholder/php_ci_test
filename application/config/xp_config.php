@@ -142,6 +142,9 @@ $config['db_table_prefix'] = 'xp_';
 $config['local_file_base_path'] = 'c:/web_workspace/';
 $config['upload_file_path'] = 'uploads/';
 $config['upload_file_thumb_path'] = 'uploads/thumb/';
+$config['upload_avatar_src_path'] = 'uploads/avatar/src/';
+$config['upload_avatar_path'] = 'uploads/avatar/';
+
 
 
 /* End of file xp_config.php */
