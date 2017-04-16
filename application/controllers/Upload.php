@@ -37,7 +37,7 @@ class Upload extends MY_Controller
 
     public function upload()
     {
-        $config['upload_path'] = '/Users/skywalker/Dev/php/php-ci-test/uploads/';
+        $config['upload_path'] = FCPATH . $this->config->item('upload_file_path', 'xp_config');
         $config['allowed_types'] = 'gif|jpg|png';
         $config['max_size'] = 10000;
         $config['max_width'] = 10240;
@@ -142,9 +142,22 @@ class Upload extends MY_Controller
 
             $imgType = IMAGETYPE_JPEG;
             $src = $data['full_path'];
-            $dst = FCPATH . $this->config->item('upload_avatar_path', 'xp_config') . date('YmdHis') . '.png';
+            $dstFileName = date('YmdHis') . '.png';
+            $dst = FCPATH . $this->config->item('upload_avatar_path', 'xp_config') . $dstFileName;
             $result = $this->crop($imgType, $src, $dst, $avatarData);
             log_debug('[upload][avatar_upload] save and crop avatar result: ' . $result);
+
+            $srcUrl = base_url() . 'uploads/avatar/src/' . $data['file_name'];
+            $dstUrl = base_url() . 'uploads/avatar/' . $dstFileName;
+            $showImg = !empty($avatarData) ? $dstUrl : $srcUrl;
+
+            $response = array(
+                'state' => 200,
+                'message' => $result,
+                'result' => $showImg
+            );
+
+            echo json_encode($response);
         }
     }
 
