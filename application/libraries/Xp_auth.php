@@ -402,6 +402,20 @@ class Xp_auth
     }
 
     /**
+     * Update user avatar:
+     *
+     * @param   int
+     * @param   string
+     * @return  bool
+     */
+    public function updateUserAvatar($userId, $avatarUrl)
+    {
+
+        return $this->ci->users->updateUserAvatar($userId, $avatarUrl);
+    }
+
+
+    /**
      * Get error message.
      * Can be invoked after any failed operation such as login or register.
      *

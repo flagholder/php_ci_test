@@ -18,6 +18,8 @@
     <link href="/php-ci-test/static/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
 
     <link rel="stylesheet" href="/php-ci-test/static/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/php-ci-test/static/css/cropper.css">
+    <link rel="stylesheet" href="/php-ci-test/static/css/cropper_main.css" >
 
     <link href="/php-ci-test/static/css/bootstrap-datepicker3.min.css" rel="stylesheet" type="text/css" />
     <link href="/php-ci-test/static/css/bootstrap-tagsinput.css" rel="stylesheet" type="text/css" />
