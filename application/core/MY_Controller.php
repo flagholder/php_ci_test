@@ -12,7 +12,7 @@
  */
 
 /**
- * MY_Controller, CI_Controller的子类
+ * MY_Controller, subclass of CI_Controller
  *
  *
  *
@@ -24,7 +24,12 @@
  */
 class MY_Controller extends CI_Controller
 {
-    private $_isXA = false;
+    protected $isXA = false;
+    protected $userInfo = array (
+        'id' => null,
+        'email' => null,
+        'username' => null
+    );
     protected $uuid = null;
     protected $loginname = null;
     protected $isLogin = false;
@@ -34,6 +39,14 @@ class MY_Controller extends CI_Controller
         parent::__construct();
 //        $this->error->set_error(ERR::ERR_OK);
 //        $this->loginVerify($checkLogin);
+
+        if ($checkLogin) {
+            $this->load->library('xp_auth');
+            $this->lang->load('auth');
+            if ($this->loginVerify()) {
+                $this->userInfo = $this->xp_auth->getUserInfo();
+            }
+        }
     }
 
 
@@ -46,8 +59,8 @@ class MY_Controller extends CI_Controller
      */
     public function transBegin()
     {
-        $this->_isXA = false;
-        return $this->_transStart();
+        $this->isXA = false;
+        return $this->transStart();
     }
 
     /**
@@ -59,17 +72,17 @@ class MY_Controller extends CI_Controller
      */
     public function transXABegin()
     {
-        $this->_isXA = true;
-        return $this->_transStart();
+        $this->isXA = true;
+        return $this->transStart();
     }
 
-    private function _transStart()
+    private function transStart()
     {
-        if (!isset($this->db) OR !is_object($this->db) OR $this->db == NULL) {
+        if (!isset($this->db) or !is_object($this->db) or $this->db == null) {
             $this->load->database('', false, true);
         }
 
-        if ($this->_isXA) {
+        if ($this->isXA) {
             $this->db->trans_xa_begin();
         } else {
             $this->db->trans_begin();
@@ -92,7 +105,7 @@ class MY_Controller extends CI_Controller
      */
     public function transCommit()
     {
-        if ($this->db == NULL) {
+        if ($this->db == null) {
             $this->transAbort();
             $this->error->set_error(ERR::ERR_TRANS_FAILED);
             return false;
@@ -130,45 +143,55 @@ class MY_Controller extends CI_Controller
      * 登陆验证
      * 未登陆跳转到登陆页面，已登陆用户执行操作检查
      *
-     * @param bool $checkLogin 是否判断登陆状态
      *
-     * @return void
+     * @return boolean
      */
-    public function loginVerify($checkLogin)
+    public function loginVerify()
     {
-        if (!$checkLogin) {
-            return;
-        }
-
         // 判断IP是否有权限访问
-        $this->access->check_ip($this->input->ip_address());
+//        $this->access->check_ip($this->input->ip_address());
 
-        if ($this->auth->is_login() !== true) {
-            if ($this->utility->is_ajax_request()) {
-                $this->load->library('json');
-                $this->error->set_error(ERR::ERR_AUTH_DENIED);
-                $this->json->output_jsonp('', array('retcode' => ERR::ERR_AUTH_DENIED, 'retmsg' => $this->error->error_msg()));
-                exit();
-            }
+        $loginStatus = $this->xp_auth->isLogin();
 
-            if (current_url() != site_url()) {
-                redirect('/auth/login?redurl=' . urlencode(current_url() . $this->build_request(true)), 'refresh');
-            }
-
-            redirect('/auth/login', 'refresh');
+        if ($loginStatus === DEF::USER_STATUS_BANNED) {
+            $this->load->view('errors/error_message');
+        } elseif ($loginStatus === DEF::USER_STATUS_NOT_ACTIVATED) {
+            redirect(base_url('auth/send_again/'));
+        } elseif ($loginStatus === DEF::USER_STATUS_ACTIVATED) {
+            // TODO: Can add more account check at here
+            return true;
         } else {
-            $this->account_verify();
+            if (current_url() != site_url()) {
+                redirect(base_url('auth/login?redurl=' . urlencode(current_url() . $this->buildRequest(true)), 'refresh'));
+            }
         }
+        return false;
+
+
+//        if ($this->auth->is_login() !== true) {
+//            if ($this->utility->is_ajax_request()) {
+//                $this->load->library('json');
+//                $this->error->set_error(ERR::ERR_AUTH_DENIED);
+//                $this->json->output_jsonp('', array('retcode' => ERR::ERR_AUTH_DENIED, 'retmsg' => $this->error->error_msg()));
+//                exit();
+//            }
+//
+//            if (current_url() != site_url()) {
+//                redirect('/auth/login?redurl=' . urlencode(current_url() . $this->build_request(true)), 'refresh');
+//            }
+//
+//            redirect('/auth/login', 'refresh');
+//        }
     }
 
 
-    function build_request($question_mark = false)
+    public function buildRequest($questionMark = false)
     {
         $get = $this->input->get();
         if (!$get) {
             return '';
         }
-        if ($question_mark) {
+        if ($questionMark) {
             return '?' . http_build_query($get);
         }
         return http_build_query($get);
@@ -191,16 +214,18 @@ class API_Controller extends MY_Controller
         $getParam = $this->input->get();
         $postParam = $this->input->get();
         $param = array();
-        if ($getParam && $postParam)
+        if ($getParam && $postParam) {
             $param = array_merge($getParam, $postParam);
-        else if ($getParam)
+        } elseif ($getParam) {
             $param = $getParam;
-        else if ($postParam)
+        } elseif ($postParam) {
             $param = $postParam;
+        }
 
         $sign = false;
-        if (isset($param['sign']))
+        if (isset($param['sign'])) {
             $sign = $param['sign'];
+        }
         if ($sign === false) {
             $this->error->set_error(ERR::ERR_VERIFY_SIGN, $sign);
             $this->error->show_text_error();
@@ -209,7 +234,7 @@ class API_Controller extends MY_Controller
 //
         $signSecret = $this->config->config['api_secret'];
         $this->load->library('utility');
-        unset ($param['sign']);
+        unset($param['sign']);
         $ret = $this->utility->verify_sign($sign, $signSecret, $param);
         if ($ret !== true) {
             $this->error->set_error(ERR::ERR_VERIFY_SIGN);

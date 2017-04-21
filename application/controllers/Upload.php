@@ -8,20 +8,13 @@
  */
 class Upload extends MY_Controller
 {
-    private $userInfo = array();
 
     public function __construct()
     {
-        parent::__construct(false);
+        parent::__construct(true);
         $this->load->helper('form');
         $this->load->library('form_validation');
         $this->load->config('xp_config', true);
-
-        $this->load->library('xp_auth');
-        $this->lang->load('auth');
-
-        $this->checkLogin();
-        $this->userInfo = $this->xp_auth->getUserInfo();
 
         ini_set('memory_limit', '1024M');
         //HTTP上传文件的开关，默认为ON即是开
@@ -305,20 +298,4 @@ class Upload extends MY_Controller
             return $msg;
         }
     }
-
-    private function checkLogin()
-    {
-        $loginStatus = $this->xp_auth->isLogin();
-        if ($loginStatus === DEF::USER_STATUS_BANNED) {
-            $this->load->view('errors/error_message');
-        } elseif ($loginStatus === DEF::USER_STATUS_NOT_ACTIVATED) {
-            redirect(base_url('auth/send_again/'));
-        } elseif ($loginStatus === DEF::USER_STATUS_ACTIVATED) {
-            return true;
-        } else {
-            redirect(base_url('auth/login'));
-        }
-        return false;
-    }
-
 }

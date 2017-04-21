@@ -33,7 +33,7 @@ class Utility
             if (preg_match("/(" . implode('|', $browser_type) . ")/i", $userAgent)) {
                 return true;
             }
-            if (isset($_SERVER['HTTP_ACCEPT']) AND $_SERVER['HTTP_ACCEPT'] == "*/*") {
+            if (isset($_SERVER['HTTP_ACCEPT']) and $_SERVER['HTTP_ACCEPT'] == "*/*") {
                 return true;
             }
         }
@@ -98,7 +98,7 @@ class Utility
      */
     public function genUniqueId()
     {
-        return md5(date('Ymd') . substr(implode(NULL, array_map('ord', str_split(substr(uniqid(), 7, 13), 1))), 0, 8));
+        return md5(date('Ymd') . substr(implode(null, array_map('ord', str_split(substr(uniqid(), 7, 13), 1))), 0, 8));
     }
 
 
