@@ -11,15 +11,14 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Test extends CI_Controller
 {
 
-    function __construct()
+    public function __construct()
     {
         parent::__construct();
-
     }
 
     public function index()
     {
-        $this->load->model('test/user_test', '', TRUE);
+        $this->load->model('test/user_test', '', true);
         $this->user_test->count_users();
         $this->load->view('welcome_message');
     }
@@ -27,5 +26,11 @@ class Test extends CI_Controller
     public function viewProfile()
     {
         $this->load->view('auth/profile');
+    }
+
+    public function showProject()
+    {
+        $this->load->view('project/show');
+//        $this->load-view('project/show');
     }
 }

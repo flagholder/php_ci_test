@@ -9,7 +9,7 @@
  * @package    Project
  * @author    Jerry Shen
  */
-class projects extends MY_Model
+class Projects extends MY_Model
 {
     private $t_projects = 'projects';
     private $db_prefix = 'xp_';
@@ -18,7 +18,7 @@ class projects extends MY_Model
     {
         parent::__construct();
 
-        $ci =& get_instance();
+        $this->ci =& get_instance();
         $this->t_projects = $this->db_prefix . $this->t_projects;
     }
 
@@ -37,5 +37,39 @@ class projects extends MY_Model
         }
         return null;
     }
+
+    /**
+     * Get projects by user id
+     *
+     * @param    int
+     * @return   array
+     */
+    public function getProjectsByUserId($userId)
+    {
+        $this->db->where('user_id', $userId);
+        $query = $this->db->get($this->t_projects);
+        if ($query->num_rows() > 0) {
+            return $query->row();
+        }
+        return null;
+    }
+
+    /**
+     * Get projects by grade
+     *
+     * @param    int
+     * @return   array
+     */
+    public function getProjectsByGrade($grade)
+    {
+        $this->db->where('grade', $grade);
+        $query = $this->db->get($this->t_projects);
+        if ($query->num_rows() > 0) {
+            return $query->row();
+        }
+        return null;
+    }
+
+
 
 }

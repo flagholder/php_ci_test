@@ -76,4 +76,11 @@ class Project extends MY_Controller
         }
     }
 
+    public function showMyProject()
+    {
+        $data = null;
+
+        $this->load->view('project/show', $data);
+    }
+
 }

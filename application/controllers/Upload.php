@@ -114,19 +114,17 @@ class Upload extends MY_Controller
     public function uploadAvatar()
     {
         $config['upload_path'] = FCPATH . $this->config->item('upload_avatar_src_path', 'xp_config');
-        $config['allowed_types'] = 'gif|jpg|png';
-        $config['max_size'] = 1000000;
+        $config['allowed_types'] = 'gif|jpg|jpeg|png';
+        $config['encrypt_name'] = true;
+        $config['max_size'] = 10240; // 10MB
         $config['max_width'] = 10240;
         $config['max_height'] = 7680;
 
-        $uploadFileUrl = base_url() . 'uploads/';
         $this->load->library('upload', $config);
-
-//        $dst = 'img/' . date('YmdHis') . '.png';
 
         $srcFile = isset($_POST['avatar_src']) ? $_POST['avatar_src'] : null;
         $avatarData = isset($_POST['avatar_data']) ? $_POST['avatar_data'] : null;
-        $file = isset($_FILES['avatar_file']) ? $_FILES['avatar_file'] : null;
+        $avatarFile = isset($_FILES['avatar_file']) ? $_FILES['avatar_file'] : null;
         log_debug('[upload][avatar] avatar_data=' . $avatarData);
 
         if (!empty($avatarData)) {
@@ -141,9 +139,9 @@ class Upload extends MY_Controller
         } else {
             $data = $this->upload->data();
 
-            $imgType = IMAGETYPE_JPEG;
+            $imgType = exif_imagetype($data['full_path']);
             $src = $data['full_path'];
-            $dstFileName = date('YmdHis') . '.png';
+            $dstFileName = $this->userInfo['id'] . '_' .date('YmdHis') . '.png';
             $dst = FCPATH . $this->config->item('upload_avatar_path', 'xp_config') . $dstFileName;
             $result = $this->crop($imgType, $src, $dst, $avatarData);
             log_debug('[upload][avatar_upload] save and crop avatar result: ' . $result);
@@ -188,6 +186,9 @@ class Upload extends MY_Controller
                 case IMAGETYPE_PNG:
                     $src_img = imagecreatefrompng($src);
                     break;
+
+                default:
+                    $src_img = null;
             }
 
             if (!$src_img) {
