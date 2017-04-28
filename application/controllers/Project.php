@@ -10,9 +10,10 @@ class Project extends MY_Controller
 {
     public function __construct()
     {
-        parent::__construct(false);
+        parent::__construct(true);
         $this->load->helper('form');
         $this->load->library('form_validation');
+        $this->load->library('xp_project');
     }
 
     public function index()
@@ -27,8 +28,6 @@ class Project extends MY_Controller
 
     public function submit()
     {
-        $this->load->library('xp_project');
-
         $redurl = $this->input->get_post('redurl') ? $this->input->get_post('redurl') : site_url('home/');
         $title = $this->input->post('title') ?? '';
         $startAt = $this->input->post('start_at') ?? '';
@@ -79,7 +78,7 @@ class Project extends MY_Controller
     public function showMyProject()
     {
         $data = null;
-
+        $this->xp_project->getProjectByUserId($this->userInfo['id']);
         $this->load->view('project/show', $data);
     }
 

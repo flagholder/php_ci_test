@@ -34,26 +34,47 @@ class Xp_project
         $this->ci->load->library('session');
         $this->ci->load->database();
         $this->ci->load->model('project/projects');
-
-        // Try to auto login
-//        $loginResult = $this->autoLogin();
-//        log_debug('auto login result ' . (int)$loginResult);
     }
 
 
-    public function createProject($title, $startAt, $endAt, $grade, $content)
+    /**
+     * Create a new project
+     *
+     * @param    int     user ID
+     * @param    string  project title
+     * @param    date    project start datetime
+     * @param    date    project end datetime
+     * @param    string  user grade
+     * @param    string  project contents
+     * @return   boolean
+     */
+    public function createProject($userId, $title, $startAt, $endAt, $grade, $content)
     {
-        $uid = 2;
+        $userId = 2;
 
         $data = array(
-            'uid' => $uid,
+            'uid' => $userId,
             'title' => $title,
             'content' => $content,
             'grade' => $grade
         );
         $this->ci->projects->createProject($data);
 
-        return null;
+        return true;
+    }
+
+    public function getProjectByUserId($userId)
+    {
+        if (!$userId) {
+            return null;
+        }
+
+        $result = $this->ci->projects->getProjectsByUserId($userId);
+        if (is_null($result)) {
+            return null;
+        } else {
+            return $result;
+        }
     }
 
 }

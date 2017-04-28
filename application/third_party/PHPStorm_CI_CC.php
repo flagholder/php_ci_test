@@ -89,6 +89,7 @@
 	 * @property movie_model         $movie_model
      * @property Xp_Auth             $auth                  auth controller
      * @property login_attempts      $login_attempts        login attempts model
+     * @property projects            $projects              projects model
 	 */
 	class CI_Controller {
 		public function __construct() {

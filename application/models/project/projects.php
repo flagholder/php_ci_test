@@ -49,7 +49,7 @@ class Projects extends MY_Model
         $this->db->where('user_id', $userId);
         $query = $this->db->get($this->t_projects);
         if ($query->num_rows() > 0) {
-            return $query->row();
+            return $query->result_array();
         }
         return null;
     }
@@ -69,6 +69,24 @@ class Projects extends MY_Model
         }
         return null;
     }
+
+
+    /**
+     * Get projects by school
+     *
+     * @param    int
+     * @return   array
+     */
+    public function getProjectsBySchool($schoolId)
+    {
+        $this->db->where('grade', $schoolId);
+        $query = $this->db->get($this->t_projects);
+        if ($query->num_rows() > 0) {
+            return $query->row();
+        }
+        return null;
+    }
+
 
 
 
