@@ -58,6 +58,7 @@ class Project extends MY_Controller
         $data['errors'] = array();
         if ($validateResult) {
             $data = $this->xp_project->createProject(
+                $this->userInfo['id'],
                 $this->form_validation->set_value('title'),
                 $this->form_validation->set_value('start_at'),
                 $this->form_validation->set_value('end_at'),
@@ -77,8 +78,17 @@ class Project extends MY_Controller
 
     public function showMyProject()
     {
-        $data = null;
-        $this->xp_project->getProjectByUserId($this->userInfo['id']);
+        $data = array (
+            'errors' => null,
+            'records' => null
+        );
+        $records = $this->xp_project->getProjectByUserId($this->userInfo['id']);
+        log_debug('[project][C][showMyProject] get projects :' . $records[0]['content']);
+        if (is_null($records)) {
+            $data['errors'] = 'Get projects by user ID failed';
+        } else {
+            $data['records'] = $records;
+        }
         $this->load->view('project/show', $data);
     }
 

@@ -18,7 +18,7 @@ class Projects extends MY_Model
     {
         parent::__construct();
 
-        $this->ci =& get_instance();
+        $ci =& get_instance();
         $this->t_projects = $this->db_prefix . $this->t_projects;
     }
 
@@ -46,8 +46,9 @@ class Projects extends MY_Model
      */
     public function getProjectsByUserId($userId)
     {
-        $this->db->where('user_id', $userId);
+        $this->db->where('uid', $userId);
         $query = $this->db->get($this->t_projects);
+        log_debug('[project][model][get_projects_by_user_id] Get rows: ' . $query->num_rows());
         if ($query->num_rows() > 0) {
             return $query->result_array();
         }

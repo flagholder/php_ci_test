@@ -104,11 +104,11 @@
                     </li>
                     <li>
                         <a href="#"><i class="fa fa-home" aria-hidden="true"></i>
-                             My School Projects</a>
+                            My School Projects</a>
                     </li>
                     <li>
                         <a href="#"><i class="fa fa-file" aria-hidden="true"></i>
-                             Other Projects</a>
+                            Other Projects</a>
                     </li>
 
                     <li class="dropdown">
@@ -130,6 +130,13 @@
             <h3>Project Title</h3>
             <div>
                 <p>Project content</p>
+                <p>
+                    <?php
+                    if (isset($records)) {
+                        print_r($records);
+                    }
+                    ?>
+                </p>
             </div>
         </div>
     </div>

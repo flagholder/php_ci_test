@@ -68,7 +68,7 @@ class Xp_project
         if (!$userId) {
             return null;
         }
-
+        log_debug('[project][lib][get_project_by_user_id] Get user_id:' . $userId);
         $result = $this->ci->projects->getProjectsByUserId($userId);
         if (is_null($result)) {
             return null;
