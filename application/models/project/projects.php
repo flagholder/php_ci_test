@@ -39,13 +39,32 @@ class Projects extends MY_Model
     }
 
     /**
-     * Get projects by user id
+     * Get a project detailed data by project ID
+     *
+     * @param    int     project ID
+     * @return   object  project data
+     */
+    public function getProjectData($projectId)
+    {
+        $this->db->where('id', $projectId);
+        $query = $this->db->get($this->t_projects);
+        log_debug('[project][model][get_project_data] Get rows: ' . $query->num_rows());
+        if ($query->num_rows() > 0) {
+            return $query->row_array(0);
+        }
+        return null;
+    }
+
+
+    /**
+     * Get project's list by user id
      *
      * @param    int
      * @return   array
      */
     public function getProjectsByUserId($userId)
     {
+        $this->db->select('id, title, cover_img, school, grade, likes, watches, project_type, created_at, updated_at');
         $this->db->where('uid', $userId);
         $query = $this->db->get($this->t_projects);
         log_debug('[project][model][get_projects_by_user_id] Get rows: ' . $query->num_rows());
@@ -56,7 +75,7 @@ class Projects extends MY_Model
     }
 
     /**
-     * Get projects by grade
+     * Get project's list by grade
      *
      * @param    int
      * @return   array
@@ -73,7 +92,7 @@ class Projects extends MY_Model
 
 
     /**
-     * Get projects by school
+     * Get project's list by school
      *
      * @param    int
      * @return   array

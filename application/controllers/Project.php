@@ -83,7 +83,7 @@ class Project extends MY_Controller
             'records' => null
         );
         $records = $this->xp_project->getProjectByUserId($this->userInfo['id']);
-        log_debug('[project][C][showMyProject] get projects :' . $records[0]['content']);
+        log_debug('[project][C][showMyProject] get projects :' . $records[0]['title']);
         if (is_null($records)) {
             $data['errors'] = 'Get projects by user ID failed';
         } else {

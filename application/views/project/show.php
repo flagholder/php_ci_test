@@ -83,11 +83,11 @@
 
 <!-- Project create form -->
 <div class="container">
-    <div class="page-header">
-        <h1>
-            <span class="fa fa-buysellads fa-fw" aria-hidden="true"></span>&nbsp;Create a new project
-        </h1>
-    </div>
+<!--    <div class="page-header">-->
+<!--        <h1>-->
+<!--            <span class="fa fa-buysellads fa-fw" aria-hidden="true"></span>&nbsp;Create a new project-->
+<!--        </h1>-->
+<!--    </div>-->
 
     <div>
         <div class="col-lg-3">
@@ -127,25 +127,41 @@
             <!-- /#sidebar-wrapper -->
         </div>
         <div class="col-lg-9">
-            <h3>Project Title</h3>
-            <div>
-                <p>Project content</p>
-                <p>
-                    <?php
-                    if (isset($records)) {
-                        print_r($records);
-                    }
-                    ?>
-                </p>
+            <h3>Projects List</h3>
+            <hr>
+
+
+            <div class="row">
+                <?php
+                if (isset($records) && !is_null($records)) {
+//                    echo '<p>Project content</p>';
+//                    print_r($records);
+                } else {
+                    echo 'No project.';
+                }
+                ?>
+            </div>
+
+            <div class="row">
+                <?php
+                foreach ($records as $project) {
+                    echo '<div class="col-xs-12 col-md-6 col-lg-4">';
+                    echo '<h3>' . $project['title'] . '</h3>';
+                    echo '<img src="//placehold.it/260x160" alt="project">';
+                    echo '</div>';
+                }
+                ?>
+
             </div>
         </div>
     </div>
-
 </div>
+
 
 <?php //$this->load->view('public/footer'); ?>
 
 <div class="container">
+    <hr>
     <!-- FOOTER -->
     <footer>
         <p class="pull-right"><a href="#">Back to top</a></p>
