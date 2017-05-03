@@ -63,7 +63,29 @@ class Xp_project
         return true;
     }
 
-    public function getProjectByUserId($userId)
+    /**
+     * Get the full contents of a project
+     *
+     * @param    int     user ID
+     * @param    int     project ID
+     * @return   object
+     */
+    public function viewProject($userId, $projectId)
+    {
+        if (!$userId || !$projectId) {
+            return null;
+        }
+        $result = $this->ci->projects->getProjectData($projectId);
+        return $result;
+    }
+
+    /**
+     * Get a project list by user ID
+     *
+     * @param    int     user ID
+     * @return   object  project list
+     */
+    public function getProjectsByUserId($userId)
     {
         if (!$userId) {
             return null;

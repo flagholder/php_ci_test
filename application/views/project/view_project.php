@@ -83,80 +83,31 @@
 
 <!-- Project create form -->
 <div class="container">
-<!--    <div class="page-header">-->
-<!--        <h1>-->
-<!--            <span class="fa fa-buysellads fa-fw" aria-hidden="true"></span>&nbsp;Create a new project-->
-<!--        </h1>-->
-<!--    </div>-->
+
+    <?php
+    if (!isset($contents) || is_null($contents)) {
+        $title = 'No such project.';
+        $hasData = false;
+    } else {
+        $title = $contents['title'];
+        $hasData = true;
+    }
+    ?>
+    <div class="page-header">
+        <h1>
+            <span class="fa fa-buysellads fa-fw" aria-hidden="true"></span>&nbsp;
+            <?php echo $title; ?>
+        </h1>
+    </div>
 
     <div>
-        <div class="col-lg-3">
-            <!-- Sidebar -->
-            <nav class="navbar" id="sidebar-wrapper" role="navigation">
-                <ul class="nav sidebar-nav">
-                    <li class="">
-                        <a href="#">
-                            <i class="fa fa-user" aria-hidden="true"></i> My Projects
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#"><i class="fa fa-rocket" aria-hidden="true"></i> My Grade Projects</a>
-                    </li>
-                    <li>
-                        <a href="#"><i class="fa fa-home" aria-hidden="true"></i>
-                            My School Projects</a>
-                    </li>
-                    <li>
-                        <a href="#"><i class="fa fa-file" aria-hidden="true"></i>
-                            Other Projects</a>
-                    </li>
+        <?php
+        if ($hasData) {
+            echo '<h3>Project contents</h3><br>';
+            print_r($contents);
+        }
+        ?>
 
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Works <span class="caret"></span></a>
-                        <ul class="dropdown-menu" role="menu">
-                            <li class="dropdown-header">Dropdown heading</li>
-                            <li><a href="#">Action</a></li>
-                            <li><a href="#">Another action</a></li>
-                            <li><a href="#">Something else here</a></li>
-                            <li><a href="#">Separated link</a></li>
-                            <li><a href="#">One more separated link</a></li>
-                        </ul>
-                    </li>
-                </ul>
-            </nav>
-            <!-- /#sidebar-wrapper -->
-        </div>
-        <div class="col-lg-9">
-            <h3>Projects List</h3>
-            <hr>
-
-
-            <div class="row">
-                <?php
-                if (isset($records) && !is_null($records)) {
-//                    echo '<p>Project content</p>';
-//                    print_r($records);
-                } else {
-                    echo 'No project.';
-                }
-                ?>
-            </div>
-
-            <div class="row">
-                <?php
-                $baseUrl = base_url('project/viewproject');
-                foreach ($records as $project) {
-                    echo '<div class="col-xs-12 col-md-6 col-lg-4">';
-                    echo '<h3>' . $project['title'] . '</h3>';
-                    echo '<img src="//placehold.it/260x160" alt="project">';
-                    $projectUrl = $baseUrl . '?pid=' . $project['id'];
-                    echo "<a href=\"{$projectUrl}\">MORE</a>";
-                    echo '</div>';
-                }
-                ?>
-
-            </div>
-        </div>
     </div>
 </div>
 

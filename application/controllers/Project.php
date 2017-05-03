@@ -78,11 +78,11 @@ class Project extends MY_Controller
 
     public function showMyProject()
     {
-        $data = array (
+        $data = array(
             'errors' => null,
             'records' => null
         );
-        $records = $this->xp_project->getProjectByUserId($this->userInfo['id']);
+        $records = $this->xp_project->getProjectsByUserId($this->userInfo['id']);
         log_debug('[project][C][showMyProject] get projects :' . $records[0]['title']);
         if (is_null($records)) {
             $data['errors'] = 'Get projects by user ID failed';
@@ -90,6 +90,28 @@ class Project extends MY_Controller
             $data['records'] = $records;
         }
         $this->load->view('project/show', $data);
+    }
+
+    public function viewProject()
+    {
+        $data = array(
+            'errors' => null,
+            'contents' => null
+        );
+
+        $projectId = $this->input->get_post('pid') ?? 0;
+        if ($projectId == 0) {
+            $data['errors'] = 'Project ID is invalid';
+        } else {
+            $contents = $this->xp_project->viewProject($this->userInfo['id'], $projectId);
+            if (is_null($contents)) {
+                $data['errors'] = 'Get project error';
+            } else {
+                $data['contents'] = $contents;
+            }
+        }
+
+        $this->load->view('project/view_project', $data);
     }
 
 }
