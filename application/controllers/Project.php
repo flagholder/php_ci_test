@@ -18,7 +18,7 @@ class Project extends MY_Controller
 
     public function index()
     {
-        return;
+        $this->showMyProject();
     }
 
     public function create()

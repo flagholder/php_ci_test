@@ -46,7 +46,7 @@ class Upload extends MY_Controller
 
         $this->load->library('upload', $config);
 
-        if (!$this->upload->do_upload('files')) {
+        if (!$this->upload->do_upload('file')) {
             $error = array('error' => $this->upload->display_errors());
 
 //            $this->load->view('upload_form', $error);
@@ -135,6 +135,65 @@ class Upload extends MY_Controller
             $error = array('error' => $this->upload->display_errors());
 //            $this->load->view('upload_form', $error);
             log_debug('[upload][avatar_upload] upload avatar file:' . $error);
+
+        } else {
+            $data = $this->upload->data();
+
+            $imgType = exif_imagetype($data['full_path']);
+            $src = $data['full_path'];
+            $dstFileName = $this->userInfo['id'] . '_' .date('YmdHis') . '.png';
+            $dst = FCPATH . $this->config->item('upload_avatar_path', 'xp_config') . $dstFileName;
+            $result = $this->crop($imgType, $src, $dst, $avatarData);
+            log_debug('[upload][avatar_upload] save and crop avatar result: ' . $result);
+
+            $srcUrl = base_url() . 'uploads/avatar/src/' . $data['file_name'];
+            $dstUrl = base_url() . 'uploads/avatar/' . $dstFileName;
+            $showImg = !empty($avatarData) ? $dstUrl : $srcUrl;
+
+            $dbResult = $this->xp_auth->updateUserAvatar($this->userInfo['id'], $dstUrl);
+            if ($dbResult) {
+                $response = array(
+                    'state' => 200,
+                    'message' => $result,
+                    'result' => $showImg
+                );
+            } else {
+                $response = array(
+                    'state' => 500,
+                    'message' => 'update database error',
+                    'result' => ''
+                );
+            }
+
+            echo json_encode($response);
+        }
+    }
+
+
+    public function uploadProjectCover()
+    {
+        $config['upload_path'] = FCPATH . $this->config->item('upload_project_img_src_path', 'xp_config');
+        $config['allowed_types'] = 'gif|jpg|jpeg|png';
+        $config['encrypt_name'] = true;
+        $config['max_size'] = 10240; // 10MB
+        $config['max_width'] = 10240;
+        $config['max_height'] = 7680;
+
+        $this->load->library('upload', $config);
+
+        $srcFile = isset($_POST['avatar_src']) ? $_POST['avatar_src'] : null;
+        $avatarData = isset($_POST['avatar_data']) ? $_POST['avatar_data'] : null;
+        $avatarFile = isset($_FILES['avatar_file']) ? $_FILES['avatar_file'] : null;
+        log_debug('[upload][project_cover] avatar_data=' . $avatarData);
+
+        if (!empty($avatarData)) {
+            $avatarData = json_decode(stripslashes($avatarData));
+        }
+
+        if (!$this->upload->do_upload('avatar_file')) {
+            $error = array('error' => $this->upload->display_errors());
+//            $this->load->view('upload_form', $error);
+            log_debug('[upload][project_cover] upload project cover :' . $error);
 
         } else {
             $data = $this->upload->data();

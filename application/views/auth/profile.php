@@ -25,7 +25,7 @@
                 } else { ?>
                     <img src="//placehold.it/200" alt="Avatar">
                 <?php } ?>
-            </div>
+        </div>
 
             <!-- Cropping modal -->
             <div class="modal fade" id="avatar-modal" aria-hidden="true" aria-labelledby="avatar-modal-label" role="dialog" tabindex="-1">

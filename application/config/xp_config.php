@@ -145,6 +145,9 @@ $config['upload_file_thumb_path'] = 'uploads/thumb/';
 $config['upload_avatar_src_path'] = 'uploads/avatar/src/';
 $config['upload_avatar_path'] = 'uploads/avatar/';
 
+$config['upload_project_img_src_path'] = 'uploads/project/src/';
+$config['upload_project_img_path'] = 'uploads/project/';
+
 
 
 /* End of file xp_config.php */

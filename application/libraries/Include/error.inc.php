@@ -26,6 +26,7 @@ class ERR
 {
     // 系统级错误码
     const ERR_OK = 0;
+    const ERR_UNDEFINED = 99999;
     const ERR_AUTH_DENIED = 1000;
     const ERR_TRANS_FAILED = 1001;
     const ERR_INVALID_INPUT = 1002;
@@ -248,22 +249,11 @@ class ERR
     const ERR_ORDER_PRODUCT_NOT_EXIST = 4053;
     const ERR_WAP_TOKEN_ID_NOT_EXIST = 4054;
 
-    //客服系统
-    const ERR_ASK_CONTENT_NOT_EXIST = 5000;
-    const ERR_ASK_LIST_NOT_EXIST = 5001;
-    const ERR_ASK_ADD_FAILED = 5002;
-    const ERR_ASK_DEL_FAILED = 5003;
-    const ERR_ASK_REPLY_FAILED = 5004;
-    const ERR_ASK_EXIST_DEL_FAILED = 5005;
-
-    //推广系统
-    const ERR_TG_USER_NOT_EXIST = 6002;
-    const ERR_TG_USER_CODE_NOT_EXIST = 6003;
-    const ERR_TG_CONIF_INFO_NOT_EXIST = 6004;
-
-    //文件上传
-    const ERR_FORM_FILE_NOT_CONFIG = 6000;
-    const ERR_UPLOAD_FILE_FAILED = 6001;
+    //File upload
+    const ERR_UPLOAD_FILE_FAILED = 6000;
+    const ERR_UPLOAD_FILE_READ_FAIL = 6001;
+    const ERR_UPLOAD_SAVE_CROP_FILE_FAIL = 6002;
+    const ERR_UPLOAD_CROP_IMG_FAIL = 6003;
 }
 
 
@@ -424,12 +414,7 @@ class ErrMessage
         ERR::ERR_NO_CHARGE_CHANNEL_SELECTED => '当前应用没有选择支付方式, 无法完成支付',
         ERR::ERR_CREATE_PRODUCT_ORDER => '创建订单商品信息失败',
         ERR::ERR_ORDER_PRODUCT_NOT_EXIST => '订单商品信息不存在',
-        ERR::ERR_ASK_CONTENT_NOT_EXIST => '问题详情信息不存在',
-        ERR::ERR_ASK_LIST_NOT_EXIST => '问题列表不存在',
-        ERR::ERR_ASK_ADD_FAILED => '添加问题失败',
-        ERR::ERR_ASK_DEL_FAILED => '删除问题失败',
-        ERR::ERR_ASK_REPLY_FAILED => '回复问题失败',
-        ERR::ERR_ASK_EXIST_DEL_FAILED => '问题已经被删除,请勿重复操作',
+
         ERR::ERR_APP_DEVICE_UPDATE_FAILED => '同步设备信息失败',
         ERR::ERR_FORM_FILE_NOT_CONFIG => '表单中上传域名设置不正确',
         ERR::ERR_OAUTH_INVALID_CLIENT => '无效的客户端',
@@ -491,8 +476,6 @@ class ErrMessage
         ERR::ERR_GIFT_ISTAKE => '已经领取过该礼包了',
         ERR::ERR_WAP_TOKEN_ID_NOT_EXIST => 'WAP_TOKEN_ID无效',
         ERR::ERR_CHANNEL_CHILD_IS_EXIST => '包含子渠道',
-        ERR::ERR_TG_USER_NOT_EXIST => '推广用户不存在',
-        ERR::ERR_TG_USER_CODE_NOT_EXIST => '推广用户的推广码不存在',
-        ERR::ERR_TG_CONIF_INFO_NOT_EXIST => '推广应用的信息不存在',
+
     );
 }
