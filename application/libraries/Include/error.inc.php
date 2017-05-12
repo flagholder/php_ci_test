@@ -250,7 +250,7 @@ class ERR
     const ERR_WAP_TOKEN_ID_NOT_EXIST = 4054;
 
     //File upload
-    const ERR_UPLOAD_FILE_FAILED = 6000;
+    const ERR_UPLOAD_FILE_FAIL = 6000;
     const ERR_UPLOAD_FILE_READ_FAIL = 6001;
     const ERR_UPLOAD_SAVE_CROP_FILE_FAIL = 6002;
     const ERR_UPLOAD_CROP_IMG_FAIL = 6003;

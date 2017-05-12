@@ -21,8 +21,8 @@
     <link rel="stylesheet" href="/php-ci-test/static/css/cropper.css">
     <link rel="stylesheet" href="/php-ci-test/static/css/cropper_main.css">
 
-    <link href="/php-ci-test/static/css/bootstrap-datepicker3min.css" rel="stylesheet" type="text/css" />
-    <link href="/php-ci-test/static/css/bootstrap-tagsinput.css" rel="stylesheet" type="text/css" />
+    <link href="/php-ci-test/static/css/bootstrap-datepicker3min.css" rel="stylesheet" type="text/css"/>
+    <link href="/php-ci-test/static/css/bootstrap-tagsinput.css" rel="stylesheet" type="text/css"/>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.3.0/codemirror.min.css">
     <!-- Include Editor style. -->
@@ -98,7 +98,7 @@
     <div class="">
 
         <form class="form-horizontal" action="<?php echo base_url('project/submit') ?>" id="form_create_project"
-              method="post">
+              enctype="multipart/form-data"  method="post">
 
             <div>
                 <?php echo validation_errors(); ?>
@@ -136,7 +136,8 @@
             <div class="form-group">
                 <label class="col-md-3 control-label" for="school">School</label>
                 <div class="col-md-3">
-                    <input id="school" name="school" placeholder="Your current school" class="form-control input-md" type="text">
+                    <input id="school" name="school" placeholder="Your current school" class="form-control input-md"
+                           type="text">
                 </div>
             </div>
 
@@ -156,7 +157,18 @@
                 </div>
             </div>
 
+            <div class="form-group">
+                <label class="col-md-3 control-label" for="cover">Project Cover</label>
 
+                <div class="col-md-3 input-group">
+                    <label class="input-group-btn">
+                    <span class="btn btn-primary">
+                        Browse… <input id="cover" name="cover" style="display: none;" type="file">
+                    </span>
+                    </label>
+                    <input id="cover_file_name" name="cover_file_name" class="form-control" readonly="" type="text">
+                </div>
+            </div>
 
             <!-- Textarea -->
             <div class="form-group">
@@ -180,156 +192,165 @@
         <div class="clearfix">&nbsp;</div>
 
 
-<!--          Cover Image  -->
-                    <div class="container form-group" id="crop-avatar">
-                        <label class="col-md-3 control-label" for="">Cover Picture</label>
-                        <div class="avatar-view" title="Upload a project cover picture">
-                            <img src="//placehold.it/320x200" alt="Cover">
-                        </div>
-
-                        <!-- Cropping modal -->
-                        <div class="modal fade" id="avatar-modal" aria-hidden="true" aria-labelledby="avatar-modal-label" role="dialog" tabindex="-1">
-                            <div class="modal-dialog modal-lg">
-                                <div class="modal-content">
-                                    <form class="avatar-form" action="http://localhost:1123/php-ci-test/upload/uploadavatar" enctype="multipart/form-data" method="post">
-                                        <div class="modal-header">
-                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                            <h4 class="modal-title" id="avatar-modal-label">Change Avatar</h4>
-                                        </div>
-                                        <div class="modal-body">
-                                            <div class="avatar-body">
-
-                                                <!-- Upload image and data -->
-                                                <div class="avatar-upload">
-                                                    <input type="hidden" class="avatar-src" name="avatar_src">
-                                                    <input type="hidden" class="avatar-data" name="avatar_data">
-                                                    <label for="avatarInput">Local upload</label>
-                                                    <input type="file" class="avatar-input" id="avatarInput" name="avatar_file">
-                                                </div>
-
-                                                <!-- Crop and preview -->
-                                                <div class="row">
-                                                    <div class="col-md-9">
-                                                        <div class="avatar-wrapper"></div>
-                                                    </div>
-                                                    <div class="col-md-3">
-                                                        <div class="avatar-preview preview-lg"></div>
-                                                        <div class="avatar-preview preview-md"></div>
-                                                        <div class="avatar-preview preview-sm"></div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="row avatar-btns">
-                                                    <div class="col-md-9">
-                                                        <div class="btn-group">
-                                                            <button type="button" class="btn btn-primary" data-method="rotate" data-option="-90" title="Rotate -90 degrees">Rotate Left</button>
-                                                            <button type="button" class="btn btn-primary" data-method="rotate" data-option="-15">-15deg</button>
-                                                            <button type="button" class="btn btn-primary" data-method="rotate" data-option="-30">-30deg</button>
-                                                            <button type="button" class="btn btn-primary" data-method="rotate" data-option="-45">-45deg</button>
-                                                        </div>
-                                                        <div class="btn-group">
-                                                            <button type="button" class="btn btn-primary" data-method="rotate" data-option="90" title="Rotate 90 degrees">Rotate Right</button>
-                                                            <button type="button" class="btn btn-primary" data-method="rotate" data-option="15">15deg</button>
-                                                            <button type="button" class="btn btn-primary" data-method="rotate" data-option="30">30deg</button>
-                                                            <button type="button" class="btn btn-primary" data-method="rotate" data-option="45">45deg</button>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-3">
-                                                        <button type="submit" class="btn btn-primary btn-block avatar-save">Done</button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div><!-- /.modal -->
-
-                        <!-- Loading state -->
-                        <div class="loading" aria-label="Loading" role="img" tabindex="-1"></div>
-
-                    </div>
+        <!--          Cover Image  -->
+        <!--                    <div class="container form-group" id="crop-avatar">-->
+        <!--                        <label class="col-md-3 control-label" for="">Cover Picture</label>-->
+        <!--                        <div class="avatar-view" title="Upload a project cover picture">-->
+        <!--                            <img src="//placehold.it/320x200" alt="Cover">-->
+        <!--                        </div>-->
+        <!---->
+        <!--                        <!-- Cropping modal -->-->
+        <!--                        <div class="modal fade" id="avatar-modal" aria-hidden="true" aria-labelledby="avatar-modal-label" role="dialog" tabindex="-1">-->
+        <!--                            <div class="modal-dialog modal-lg">-->
+        <!--                                <div class="modal-content">-->
+        <!--                                    <form class="avatar-form" action="http://localhost:1123/php-ci-test/upload/uploadavatar" enctype="multipart/form-data" method="post">-->
+        <!--                                        <div class="modal-header">-->
+        <!--                                            <button type="button" class="close" data-dismiss="modal">&times;</button>-->
+        <!--                                            <h4 class="modal-title" id="avatar-modal-label">Change Avatar</h4>-->
+        <!--                                        </div>-->
+        <!--                                        <div class="modal-body">-->
+        <!--                                            <div class="avatar-body">-->
+        <!---->
+        <!--                                                <!-- Upload image and data -->-->
+        <!--                                                <div class="avatar-upload">-->
+        <!--                                                    <input type="hidden" class="avatar-src" name="avatar_src">-->
+        <!--                                                    <input type="hidden" class="avatar-data" name="avatar_data">-->
+        <!--                                                    <label for="avatarInput">Local upload</label>-->
+        <!--                                                    <input type="file" class="avatar-input" id="avatarInput" name="avatar_file">-->
+        <!--                                                </div>-->
+        <!---->
+        <!--                                                <!-- Crop and preview -->-->
+        <!--                                                <div class="row">-->
+        <!--                                                    <div class="col-md-9">-->
+        <!--                                                        <div class="avatar-wrapper"></div>-->
+        <!--                                                    </div>-->
+        <!--                                                    <div class="col-md-3">-->
+        <!--                                                        <div class="avatar-preview preview-lg"></div>-->
+        <!--                                                        <div class="avatar-preview preview-md"></div>-->
+        <!--                                                        <div class="avatar-preview preview-sm"></div>-->
+        <!--                                                    </div>-->
+        <!--                                                </div>-->
+        <!---->
+        <!--                                                <div class="row avatar-btns">-->
+        <!--                                                    <div class="col-md-9">-->
+        <!--                                                        <div class="btn-group">-->
+        <!--                                                            <button type="button" class="btn btn-primary" data-method="rotate" data-option="-90" title="Rotate -90 degrees">Rotate Left</button>-->
+        <!--                                                            <button type="button" class="btn btn-primary" data-method="rotate" data-option="-15">-15deg</button>-->
+        <!--                                                            <button type="button" class="btn btn-primary" data-method="rotate" data-option="-30">-30deg</button>-->
+        <!--                                                            <button type="button" class="btn btn-primary" data-method="rotate" data-option="-45">-45deg</button>-->
+        <!--                                                        </div>-->
+        <!--                                                        <div class="btn-group">-->
+        <!--                                                            <button type="button" class="btn btn-primary" data-method="rotate" data-option="90" title="Rotate 90 degrees">Rotate Right</button>-->
+        <!--                                                            <button type="button" class="btn btn-primary" data-method="rotate" data-option="15">15deg</button>-->
+        <!--                                                            <button type="button" class="btn btn-primary" data-method="rotate" data-option="30">30deg</button>-->
+        <!--                                                            <button type="button" class="btn btn-primary" data-method="rotate" data-option="45">45deg</button>-->
+        <!--                                                        </div>-->
+        <!--                                                    </div>-->
+        <!--                                                    <div class="col-md-3">-->
+        <!--                                                        <button type="submit" class="btn btn-primary btn-block avatar-save">Done</button>-->
+        <!--                                                    </div>-->
+        <!--                                                </div>-->
+        <!--                                            </div>-->
+        <!--                                        </div>-->
+        <!--                                    </form>-->
+        <!--                                </div>-->
+        <!--                            </div>-->
+        <!--                        </div><!-- /.modal -->-->
+        <!---->
+        <!--                        <!-- Loading state -->-->
+        <!--                        <div class="loading" aria-label="Loading" role="img" tabindex="-1"></div>-->
+        <!---->
+        <!--                    </div>-->
+        <!---->
+        <!--    </div>-->
 
     </div>
 
-</div>
+    <?php //$this->load->view('public/footer'); ?>
 
-<?php //$this->load->view('public/footer'); ?>
-
-<div class="container">
-    <!-- FOOTER -->
-    <footer>
-        <p class="pull-right"><a href="#">Back to top</a></p>
-        <p>&copy; 2017 X-Projects, Inc. &middot; <a href="#">Privacy</a> &middot; <a href="#">Terms</a></p>
-    </footer>
-</div>
+    <div class="container">
+        <!-- FOOTER -->
+        <footer>
+            <p class="pull-right"><a href="#">Back to top</a></p>
+            <p>&copy; 2017 X-Projects, Inc. &middot; <a href="#">Privacy</a> &middot; <a href="#">Terms</a></p>
+        </footer>
+    </div>
 
 
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-<script>window.jQuery || document.write('<script src="/php-ci-test/static/js/vendor/jquery-1.11.2.min.js"><\/script>')</script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="/php-ci-test/static/js/vendor/jquery-1.11.2.min.js"><\/script>')</script>
 
-<script src="/php-ci-test/static/js/vendor/bootstrap.min.js"></script>
+    <script src="/php-ci-test/static/js/vendor/bootstrap.min.js"></script>
 
-<script src="/php-ci-test/static/js/vendor/bootstrap3-typeahead.min.js"></script>
-<script src="/php-ci-test/static/js/vendor/bootstrap-datepicker.min.js"></script>
-<script src="/php-ci-test/static/js/vendor/bootstrap-tagsinput.js"></script>
-<script src="/php-ci-test/static/js/vendor/cropper.js"></script>
-<script src="/php-ci-test/static/js/cropper_main.js"></script>
-<script src="/php-ci-test/static/js/vendor/froala/froala_editor.pkgd.min.js"></script>
+    <script src="/php-ci-test/static/js/vendor/bootstrap3-typeahead.min.js"></script>
+    <script src="/php-ci-test/static/js/vendor/bootstrap-datepicker.min.js"></script>
+    <script src="/php-ci-test/static/js/vendor/bootstrap-tagsinput.js"></script>
+    <script src="/php-ci-test/static/js/vendor/cropper.js"></script>
+    <script src="/php-ci-test/static/js/cropper_main.js"></script>
+    <script src="/php-ci-test/static/js/vendor/froala/froala_editor.pkgd.min.js"></script>
 
-<script src="/php-ci-test/static/js/plugins.js"></script>
-<script src="/php-ci-test/static/js/main.js"></script>
+    <script src="/php-ci-test/static/js/plugins.js"></script>
+    <script src="/php-ci-test/static/js/main.js"></script>
 
-<!-- Initialize the editor. -->
-<script>
+    <!-- Initialize the editor. -->
+    <script>
 
-    $('#start_at').datepicker({
-        format: "yyyy-mm-dd",
-        startView: 2,
-        maxViewMode: 3
-    });
-
-    $('#end_at').datepicker({
-        format: "yyyy-mm-dd",
-        startView: 2,
-        maxViewMode: 3
-    });
-
-    $("#school").typeahead({
-        source: function (query, process) {
-            return $.get('http://www.greatschools.org/gsr/search/suggest/school?query=' + query, function (data) {
-                return data[0]["school_name"];
-            });
-        }
-    });
-
-    $(function () {
-//    $('.editor').froalaEditor({initOnClick: true});
-        $('#content').froalaEditor({
-            imageUploadURL: 'http://localhost:1123/php-ci-test/upload/upload',
-            height: 300,
-            toolbarButtons: ['fullscreen', 'bold', 'italic', 'underline', 'fontFamily', 'fontSize', 'insertLink', 'insertImage', 'insertTable', 'undo', 'redo']
+        $('#start_at').datepicker({
+            format: "yyyy-mm-dd",
+            startView: 2,
+            maxViewMode: 3
         });
-    });
-</script>
 
-<!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
-<script>
-    (function (b, o, i, l, e, r) {
-        b.GoogleAnalyticsObject = l;
-        b[l] || (b[l] =
-            function () {
-                (b[l].q = b[l].q || []).push(arguments)
+        $('#end_at').datepicker({
+            format: "yyyy-mm-dd",
+            startView: 2,
+            maxViewMode: 3
+        });
+
+        $("#school").typeahead({
+            source: function (query, process) {
+                return $.get('http://www.greatschools.org/gsr/search/suggest/school?query=' + query, function (data) {
+                    return data[0]["school_name"];
+                });
+            }
+        });
+
+        $(function () {
+//    $('.editor').froalaEditor({initOnClick: true});
+            $('#content').froalaEditor({
+                imageUploadURL: 'http://localhost:1123/php-ci-test/upload/upload',
+                height: 300,
+                toolbarButtons: ['fullscreen', 'bold', 'italic', 'underline', 'fontFamily', 'fontSize', 'insertLink', 'insertImage', 'insertTable', 'undo', 'redo']
             });
-        b[l].l = +new Date;
-        e = o.createElement(i);
-        r = o.getElementsByTagName(i)[0];
-        e.src = '//www.google-analytics.com/analytics.js';
-        r.parentNode.insertBefore(e, r)
-    }(window, document, 'script', 'ga'));
-    ga('create', 'UA-XXXXX-X', 'auto');
-    ga('send', 'pageview');
-</script>
+        });
+
+        $(function() {
+            $('#cover').change(function () {
+                var input = $(this);
+                var label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+                input.parents('.input-group').find(':text').val(label);
+            });
+        });
+
+    </script>
+
+    <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
+    <script>
+        (function (b, o, i, l, e, r) {
+            b.GoogleAnalyticsObject = l;
+            b[l] || (b[l] =
+                function () {
+                    (b[l].q = b[l].q || []).push(arguments)
+                });
+            b[l].l = +new Date;
+            e = o.createElement(i);
+            r = o.getElementsByTagName(i)[0];
+            e.src = '//www.google-analytics.com/analytics.js';
+            r.parentNode.insertBefore(e, r)
+        }(window, document, 'script', 'ga'));
+        ga('create', 'UA-XXXXX-X', 'auto');
+        ga('send', 'pageview');
+    </script>
 
 </body>
 </html>

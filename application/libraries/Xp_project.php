@@ -48,13 +48,14 @@ class Xp_project
      * @param    string  project contents
      * @return   boolean
      */
-    public function createProject($userId, $title, $startAt, $endAt, $grade, $content)
+    public function createProject($userId, $title, $startAt, $endAt, $grade, $cover, $content)
     {
-        $userId = 2;
+//        $userId = 2;
 
         $data = array(
             'uid' => $userId,
             'title' => $title,
+            'cover_img' => $cover,
             'content' => $content,
             'grade' => $grade
         );
