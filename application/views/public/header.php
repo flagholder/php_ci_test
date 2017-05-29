@@ -52,9 +52,9 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-                <li class="active"><a href="#">Home</a></li>
-                <li><a href="#about">About</a></li>
-                <li><a href="#contact">Contact</a></li>
+                <li class="active"><a href="http://localhost:1123/php-ci-test/">Home</a></li>
+                <li><a href="http://localhost:1123/php-ci-test/project/create">Create</a></li>
+                <li><a href="http://localhost:1123/php-ci-test/project/">My Projects</a></li>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                        aria-expanded="false">Dropdown <span class="caret"></span></a>
@@ -70,12 +70,16 @@
                 </li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="../navbar-static-top/">Static top</a></li>
-                <li class="active"><a href="./">Fixed top <span class="sr-only">(current)</span></a></li>
+                <li><a href="#">Static top</a></li>
+                <li class="active"><a href="#">Fixed top <span class="sr-only">(current)</span></a></li>
                 <?php if (isset($username) && $username) {?>
                     <li>
                         <a href="http://localhost:1123/php-ci-test/user/showprofile">
                             <span class="fa fa-user fa-fw"></span>&nbsp;<?php echo $username; ?>
+                        </a>
+
+                        <a href="http://localhost:1123/php-ci-test/auth/signout">
+                            <span class="fa fa-sign-out fa-fw"></span>&nbsp;Sign Out
                         </a>
                     </li>
                 <?php } else { ?>

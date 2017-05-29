@@ -82,7 +82,7 @@
 
 
 <!-- Project create form -->
-<div class="container">
+<div class="container" style="min-height: 600px">
 
     <?php
     if (!isset($contents) || is_null($contents)) {
@@ -98,6 +98,12 @@
             <span class="fa fa-buysellads fa-fw" aria-hidden="true"></span>&nbsp;
             <?php echo $title; ?>
         </h1>
+        <span class="fa fa-calendar fa-fw" aria-hidden="true"></span>
+        <?php echo $contents['created_at'] . ' ';?>
+
+        <span class="fa fa-user fa-fw" aria-hidden="true"></span>
+        <?php echo 'User ID ' . $contents['uid'];?>
+
     </div>
 
     <div>
